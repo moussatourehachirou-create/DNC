@@ -2,7 +2,15 @@
 
 export type PriceBasis = "bi" | "bs";
 export type Organisation = { id: string; code: string; name: string; kind: string; price_basis: PriceBasis | null };
-export type Version = { id: string; label: string; kind: string; status: string; fiscal_year_id: string };
+export type ControlMode = "brouillon" | "programmation";
+export type Version = {
+  id: string;
+  label: string;
+  kind: string;
+  status: string;
+  fiscal_year_id: string;
+  control_mode: ControlMode;
+};
 
 export type Line = {
   id: string;
@@ -32,6 +40,7 @@ export type PlanNode = {
   start_month: number | null;
   end_month: number | null;
   execution_mode: string | null;
+  attributes: Record<string, unknown> | null;
   origin: string;
   cost: number;
   children: PlanNode[];
@@ -103,6 +112,32 @@ export type Analysis = {
   rules_version: string;
 };
 
+export type Fix = {
+  kind: "raise_amount" | "raise_ae" | "align_period";
+  node_id: string;
+  label: string;
+  source: string | null;
+  amount: number | null;
+  start_month: number | null;
+  end_month: number | null;
+};
+
+export type Finding = {
+  code: string;
+  severity: Violation["severity"];
+  node_id: string;
+  message: string;
+  fix: Fix | null;
+};
+
+export type Coherence = {
+  mode: ControlMode;
+  counts: Record<Violation["severity"], number>;
+  by_code: Record<string, { severity: Finding["severity"]; count: number }>;
+  findings: Finding[];
+  weight_rates: Record<string, number>;
+};
+
 export type PriceHit = {
   id: string;
   code: string | null;
@@ -149,7 +184,8 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   if (!response.ok) {
     let detail = response.statusText;
     try {
-      detail = (await response.json()).detail ?? detail;
+      const body = (await response.json()).detail ?? detail;
+      detail = typeof body === "object" && body && "message" in body ? body.message : body;
     } catch {
       /* corps non JSON */
     }
@@ -205,6 +241,10 @@ export const api = {
   propose: (nodeId: string) => request<Proposal>(`/nodes/${nodeId}/propose`, { method: "POST" }),
   applyProposal: (nodeId: string, tasks: unknown) =>
     request<PlanNode[]>(`/nodes/${nodeId}/apply-proposal`, json("POST", tasks)),
+  coherence: (versionId: string) => request<Coherence>(`/versions/${versionId}/coherence`),
+  setMode: (versionId: string, mode: ControlMode) =>
+    request<Version>(`/versions/${versionId}/mode`, json("PUT", { mode })),
+  applyFix: (versionId: string, fix: Fix) => request<Coherence>(`/versions/${versionId}/coherence/fix`, json("POST", fix)),
   exportUrl: (versionId: string, kind: "pta" | "pcc" | "ppm") => `/api/versions/${versionId}/exports/${kind}.xlsx`,
 };
 

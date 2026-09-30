@@ -33,6 +33,7 @@ class VersionOut(BaseModel):
     label: str
     kind: str
     status: str
+    control_mode: str
 
 
 class LineIn(BaseModel):
@@ -71,6 +72,10 @@ class NodeIn(BaseModel):
     weight: Decimal | None = None
     responsible: str | None = None
     execution_mode: str | None = None
+    # {"AE": {"BN": 0}, "CP": {"BN": 0}} en FCFA
+    amounts: dict[str, dict[str, int]] | None = None
+    # Fusionnés dans les attributs existants : indicateur, validateur…
+    attributes: dict | None = None
 
 
 class NodeOut(BaseModel):
@@ -88,6 +93,7 @@ class NodeOut(BaseModel):
     responsible: str | None
     execution_mode: str | None
     amounts: dict | None
+    attributes: dict | None
     origin: str
     cost: int = 0
     children: list[NodeOut] = []

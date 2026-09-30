@@ -12,6 +12,7 @@ import {
   type Proposal,
 } from "../api";
 import { useSelection } from "../context";
+import CoherencePanel from "./CoherencePanel";
 
 function flatten(nodes: PlanNode[], depth = 0, out: { node: PlanNode; depth: number }[] = []) {
   for (const node of nodes) {
@@ -331,7 +332,10 @@ export default function PlanPage() {
   const [newActivity, setNewActivity] = useState("");
   const rows = useMemo(() => flatten(tree.data ?? []), [tree.data]);
   const selected = rows.find((r) => r.node.id === selectedId)?.node ?? null;
-  const refresh = () => queryClient.invalidateQueries({ queryKey: ["tree", versionId] });
+  const refresh = () => {
+    queryClient.invalidateQueries({ queryKey: ["tree", versionId] });
+    queryClient.invalidateQueries({ queryKey: ["coherence", versionId] });
+  };
   const addActivity = useMutation({
     mutationFn: () =>
       api.createNode(versionId!, {
@@ -359,6 +363,14 @@ export default function PlanPage() {
       <p className="muted">
         Total programmé : <strong>{fcfa(total)}</strong> · {rows.length} éléments
       </p>
+      <CoherencePanel
+        versionId={versionId}
+        labelOf={(id) => {
+          const node = rows.find((r) => r.node.id === id)?.node;
+          return node ? `${LEVEL_LABELS[node.level] ?? node.level} ${node.code ?? ""} ${node.label}` : id;
+        }}
+        onSelect={setSelectedId}
+      />
       <div className="row" style={{ margin: "12px 0" }}>
         <input
           placeholder="Nouvelle activité (une phrase suffit)"

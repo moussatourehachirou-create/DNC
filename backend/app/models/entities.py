@@ -118,6 +118,8 @@ class PlanVersion(Timestamped, Base):
     kind: Mapped[VersionKind] = mapped_column(String(16), default=VersionKind.INITIALE)
     status: Mapped[VersionStatus] = mapped_column(String(16), default=VersionStatus.BROUILLON)
     parent_version_id: Mapped[str | None] = mapped_column(ForeignKey("plan_version.id"))
+    # Mode de travail : « brouillon » (saisie libre) ou « programmation » (contrôles actifs)
+    control_mode: Mapped[str] = mapped_column(String(16), default="brouillon")
 
     fiscal_year: Mapped[FiscalYear] = relationship()
     nodes: Mapped[list[PlanNode]] = relationship(

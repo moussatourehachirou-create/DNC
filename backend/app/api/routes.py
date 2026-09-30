@@ -31,6 +31,7 @@ from app.api.schemas import (
 )
 from app.core.db import get_session
 from app.engines.budget_rules import check_envelopes, envelope_statuses
+from app.engines.coherence import ControlMode, Fix
 from app.engines.costing import line_cost
 from app.engines.instruments import totals
 from app.engines.procurement import BENIN_2020_599, build_lots, check_lots
@@ -44,7 +45,7 @@ from app.models.entities import (
     PriceItem,
     ResourceLineRow,
 )
-from app.services import exports, nomenclature, prices
+from app.services import coherence, exports, nomenclature, prices
 from app.services.ai import planning_agent
 from app.services.persist import get_or_create_year, save_import
 from app.services.price_import import parse_price_file, parse_rpr_pdf
@@ -64,6 +65,24 @@ def _get(session: Session, model, id_: str):
 
 
 # --- Structures -------------------------------------------------------------------
+
+
+def _commit_checked(session: Session, version_id: str) -> None:
+    """Valide la transaction ; en mode programmation, refuse toute anomalie bloquante."""
+    version = session.get(PlanVersion, version_id)
+    if version is not None and version.control_mode == ControlMode.PROGRAMMATION:
+        session.flush()
+        blocking = coherence.run(session, version_id).blocking
+        if blocking:
+            session.rollback()
+            raise HTTPException(
+                409,
+                {
+                    "message": "Modification refusée en mode programmation (contrôles actifs).",
+                    "findings": [{"code": f.code, "message": f.message} for f in blocking],
+                },
+            )
+    session.commit()
 
 
 @router.post("/organisations", response_model=OrganisationOut, status_code=201)
@@ -216,7 +235,7 @@ def create_node(version_id: str, body: NodeIn, session: Session = Depends(get_se
         **body.model_dump(),
     )
     session.add(node)
-    session.commit()
+    _commit_checked(session, version_id)
     return _node_out(node)
 
 
@@ -224,8 +243,10 @@ def create_node(version_id: str, body: NodeIn, session: Session = Depends(get_se
 def update_node(node_id: str, body: NodeIn, session: Session = Depends(get_session)):
     node = _get(session, PlanNode, node_id)
     for key, value in body.model_dump(exclude_unset=True).items():
+        if key == "attributes":
+            value = {**(node.attributes or {}), **(value or {})}
         setattr(node, key, value)
-    session.commit()
+    _commit_checked(session, node.version_id)
     return _node_out(node)
 
 
@@ -243,7 +264,7 @@ def create_line(node_id: str, body: LineIn, session: Session = Depends(get_sessi
         organisation_id=node.organisation_id, node_id=node_id, **body.model_dump()
     )
     session.add(row)
-    session.commit()
+    _commit_checked(session, node.version_id)
     return _line_out(row)
 
 
@@ -252,7 +273,7 @@ def update_line(line_id: str, body: LineIn, session: Session = Depends(get_sessi
     row = _get(session, ResourceLineRow, line_id)
     for key, value in body.model_dump(exclude_unset=True).items():
         setattr(row, key, value)
-    session.commit()
+    _commit_checked(session, row.node.version_id)
     return _line_out(row)
 
 
@@ -290,6 +311,60 @@ def set_envelopes(version_id: str, body: list[EnvelopeIn], session: Session = De
 
 
 # --- Analyse : enveloppes, marchés, contrôles --------------------------------------
+
+
+class ModeIn(BaseModel):
+    mode: ControlMode
+
+
+class FixIn(BaseModel):
+    kind: str
+    node_id: str
+    source: str | None = None
+    amount: int | None = None
+    start_month: int | None = None
+    end_month: int | None = None
+
+
+@router.get("/versions/{version_id}/coherence")
+def version_coherence(version_id: str, session: Session = Depends(get_session)):
+    version = _get(session, PlanVersion, version_id)
+    return {
+        "mode": version.control_mode,
+        **coherence.report_json(coherence.run(session, version_id)),
+    }
+
+
+@router.put("/versions/{version_id}/mode", response_model=VersionOut)
+def set_mode(version_id: str, body: ModeIn, session: Session = Depends(get_session)):
+    """Passe en mode programmation (seulement sans anomalie bloquante) ou revient au brouillon."""
+    version = _get(session, PlanVersion, version_id)
+    if body.mode == ControlMode.PROGRAMMATION:
+        report = coherence.run(session, version_id)
+        if report.blocking:
+            raise HTTPException(
+                409,
+                {
+                    "message": f"{len(report.blocking)} anomalie(s) bloquante(s) à corriger avant "
+                    "d'activer les contrôles.",
+                    **coherence.report_json(report),
+                },
+            )
+    version.control_mode = body.mode
+    session.commit()
+    return version
+
+
+@router.post("/versions/{version_id}/coherence/fix")
+def apply_coherence_fix(version_id: str, body: FixIn, session: Session = Depends(get_session)):
+    """Applique une correction proposée par le contrôle de cohérence."""
+    _get(session, PlanVersion, version_id)
+    try:
+        changed = coherence.apply_fix(session, version_id, Fix(label="", **body.model_dump()))
+    except ValueError as exc:
+        raise HTTPException(422, str(exc)) from exc
+    _commit_checked(session, version_id)
+    return {"changed": changed, **coherence.report_json(coherence.run(session, version_id))}
 
 
 @router.get("/versions/{version_id}/analysis")
@@ -454,7 +529,7 @@ def apply_proposal(
                 )
             )
         created.append(node)
-    session.commit()
+    _commit_checked(session, activity.version_id)
     return [_node_out(n) for n in created]
 
 
