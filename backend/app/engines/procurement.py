@@ -32,7 +32,15 @@ class MarketType(StrEnum):
     TRAVAUX = "T"
     FOURNITURES = "F"
     SERVICES = "S"
-    PRESTATIONS_INTELLECTUELLES = "PI"
+    PRESTATIONS_INTELLECTUELLES = "PI"  # confiées à des cabinets, bureaux ou firmes
+    CONSULTANT_INDIVIDUEL = "PI_IND"  # prestations intellectuelles, consultants individuels
+
+
+class AuthorityScope(StrEnum):
+    """Catégorie d'autorité contractante au sens du décret n° 2020-599."""
+
+    ETAT = "etat"  # toutes autorités sauf communes sans statut particulier
+    COMMUNE_SANS_STATUT = "commune_sans_statut_particulier"
 
 
 @dataclass(frozen=True)
@@ -53,10 +61,13 @@ class ProcedureStep:
 
 @dataclass(frozen=True)
 class ProcurementRules:
-    """Référentiel de passation d'un exercice.
+    """Référentiel de passation d'un exercice et d'une catégorie d'autorité.
 
     - `thresholds` : barème croissant de procédures par type de marché ;
     - `steps` : étapes et délais par code de procédure ;
+    - `control_thresholds` : montant HT à partir duquel l'organe national (DNCMP)
+      exerce le contrôle a priori ; en dessous, la cellule de contrôle (CCMP) ;
+    - `community_thresholds` : seuils UEMOA imposant la publication communautaire ;
     - `category_types` : type de marché de chaque catégorie de besoin ;
     - les seuils s'appliquent aux montants HT : si les coûts programmés sont TTC,
       ils sont convertis avec `vat_rate`.
@@ -65,6 +76,10 @@ class ProcurementRules:
     version: str
     thresholds: dict[MarketType, tuple[ProcedureThreshold, ...]]
     steps: dict[str, tuple[ProcedureStep, ...]]
+    control_thresholds: dict[MarketType, int] = field(default_factory=dict)
+    community_thresholds: dict[MarketType, int] = field(default_factory=dict)
+    national_control_body: str = "DNCMP"
+    local_control_body: str = "CCMP"
     category_types: dict[str, MarketType] = field(default_factory=dict)
     default_type: MarketType = MarketType.FOURNITURES
     costs_include_vat: bool = True
@@ -86,16 +101,25 @@ class ProcurementRules:
                 return threshold
         raise ValueError("aucune procédure ne couvre ce montant : référentiel incomplet")
 
+    def control_body_for(self, amount_ht: int, market_type: MarketType) -> str:
+        """Organe de contrôle a priori (art. 9 à 11 du décret n° 2020-599)."""
+        ceiling = self.control_thresholds.get(market_type)
+        if ceiling is not None and amount_ht >= ceiling:
+            return self.national_control_body
+        return self.local_control_body
 
-def _scale(*pairs: tuple[str, str, int | None]) -> tuple[ProcedureThreshold, ...]:
-    return tuple(ProcedureThreshold(code, label, ceiling) for code, label, ceiling in pairs)
+    def requires_community_publication(self, amount_ht: int, market_type: MarketType) -> bool:
+        """Publication de l'avis sur le site de l'UEMOA (art. 7 et 8)."""
+        ceiling = self.community_thresholds.get(market_type)
+        return ceiling is not None and amount_ht >= ceiling
 
 
-_DISPENSE = ("dispense", "Dispense de procédure", 4_000_000)
+_DISPENSE = ("dispense", "Dispense de procédure (3 devis)", 4_000_000)
 _DC = ("DC", "Demande de cotation", 10_000_000)
+_DRP = "Demande de renseignements et de prix"
 
 # Étapes calquées sur les colonnes des PPM officiels (MESTFP, MIC 2025) pour que
-# l'export remplisse directement le format attendu. Délais provisoires, À VALIDER.
+# l'export remplisse directement le format attendu. Délais indicatifs, paramétrables.
 _STEPS_DRP_AO = lambda publication: (  # noqa: E731
     ProcedureStep("reception_dossier", "Réception du dossier par l'organe de contrôle", 5),
     ProcedureStep("avis_dossier", "Avis de non-objection sur le dossier", 5),
@@ -109,78 +133,119 @@ _STEPS_DRP_AO = lambda publication: (  # noqa: E731
     ProcedureStep("notification", "Notification du contrat", 3),
 )
 
-# Référentiel initial — Bénin, loi n° 2020-26 et décret n° 2020-599.
-# Vérifiés dans le décret : dispense ≤ 4 000 000 et demande de cotation ≤ 10 000 000 FCFA HT.
-# Plafonds de la DRP DÉDUITS des PPM 2025 (MESTFP, MIC, MJL) : DRP observée jusqu'à
-# ~70 M pour fournitures et services, ~50 M pour prestations intellectuelles, ~160 M
-# pour travaux ; appels d'offres observés au-delà. Valeurs PROVISOIRES À VALIDER (ARMP).
-BENIN_2020_599_PROVISOIRE = ProcurementRules(
-    version="decret-2020-599-provisoire-2025",
-    thresholds={
-        MarketType.FOURNITURES: _scale(
-            _DISPENSE,
-            _DC,
-            ("DRP", "Demande de renseignements et de prix", 70_000_000),
-            ("AOO", "Appel d'offres ouvert", None),
-        ),
-        MarketType.SERVICES: _scale(
-            _DISPENSE,
-            _DC,
-            ("DRP", "Demande de renseignements et de prix", 70_000_000),
-            ("AOO", "Appel d'offres ouvert", None),
-        ),
-        MarketType.TRAVAUX: _scale(
-            _DISPENSE,
-            _DC,
-            ("DRP", "Demande de renseignements et de prix", 200_000_000),
-            ("AOO", "Appel d'offres ouvert", None),
-        ),
-        MarketType.PRESTATIONS_INTELLECTUELLES: _scale(
-            _DISPENSE,
-            _DC,
-            ("DRP", "Demande de renseignements et de prix", 50_000_000),
-            ("AMI_DP", "Appel à manifestation d'intérêt puis demande de propositions", None),
-        ),
-    },
-    steps={
-        "dispense": (
-            ProcedureStep("expression_besoin", "Expression du besoin", 5),
-            ProcedureStep("bon_commande", "Bon de commande", 5),
-        ),
-        "DC": (
-            ProcedureStep("dossier", "Préparation du dossier de cotation", 7),
-            ProcedureStep("consultation", "Consultation des fournisseurs", 10),
-            ProcedureStep("evaluation", "Ouverture et évaluation", 7),
-            ProcedureStep("attribution", "Attribution et notification", 6),
-        ),
-        "DRP": _STEPS_DRP_AO(10),
-        "AOO": _STEPS_DRP_AO(30),
-        "AMI_DP": (
-            ProcedureStep("ami", "Appel à manifestation d'intérêt", 30),
-            ProcedureStep("evaluation_ami", "Évaluation des manifestations", 15),
-            ProcedureStep("demande_propositions", "Demande de propositions", 30),
-            ProcedureStep("evaluation_technique", "Évaluation technique", 15),
-            ProcedureStep("evaluation_financiere", "Évaluation financière", 10),
-            ProcedureStep("contrat", "Négociation, approbation, notification", 15),
-        ),
-    },
-    category_types={
-        "impression": MarketType.SERVICES,
-        "restauration": MarketType.SERVICES,
-        "location_salle": MarketType.SERVICES,
-        "entretien_locaux": MarketType.SERVICES,
-        "maintenance": MarketType.SERVICES,
-        "fournitures_bureau": MarketType.FOURNITURES,
-        "materiel_informatique": MarketType.FOURNITURES,
-        "mobilier": MarketType.FOURNITURES,
-        "vehicules": MarketType.FOURNITURES,
-        "carburant": MarketType.FOURNITURES,
-        "construction": MarketType.TRAVAUX,
-        "rehabilitation": MarketType.TRAVAUX,
-        "etudes": MarketType.PRESTATIONS_INTELLECTUELLES,
-        "consultants": MarketType.PRESTATIONS_INTELLECTUELLES,
-    },
-)
+_STEPS = {
+    "dispense": (
+        ProcedureStep("devis", "Consultation de trois fournisseurs", 5),
+        ProcedureStep("bon_commande", "Bon de commande et facture", 5),
+    ),
+    "DC": (
+        ProcedureStep("dossier", "Préparation du dossier de cotation", 7),
+        ProcedureStep("consultation", "Consultation des fournisseurs", 10),
+        ProcedureStep("evaluation", "Ouverture et évaluation", 7),
+        ProcedureStep("attribution", "Attribution et notification", 6),
+    ),
+    "DRP": _STEPS_DRP_AO(10),
+    "AOO": _STEPS_DRP_AO(30),
+    "AMI_DP": (
+        ProcedureStep("ami", "Appel à manifestation d'intérêt", 30),
+        ProcedureStep("evaluation_ami", "Évaluation des manifestations", 15),
+        ProcedureStep("demande_propositions", "Demande de propositions", 30),
+        ProcedureStep("evaluation_technique", "Évaluation technique", 15),
+        ProcedureStep("evaluation_financiere", "Évaluation financière", 10),
+        ProcedureStep("contrat", "Négociation, approbation, notification", 15),
+    ),
+    "SCI": (
+        ProcedureStep("avis", "Avis de sélection de consultants individuels", 20),
+        ProcedureStep("evaluation", "Comparaison des CV et évaluation", 15),
+        ProcedureStep("contrat", "Négociation, approbation, notification", 15),
+    ),
+}
+
+_CATEGORY_TYPES = {
+    "impression": MarketType.SERVICES,
+    "restauration": MarketType.SERVICES,
+    "location_salle": MarketType.SERVICES,
+    "entretien_locaux": MarketType.SERVICES,
+    "maintenance": MarketType.SERVICES,
+    "fournitures_bureau": MarketType.FOURNITURES,
+    "materiel_informatique": MarketType.FOURNITURES,
+    "mobilier": MarketType.FOURNITURES,
+    "vehicules": MarketType.FOURNITURES,
+    "carburant": MarketType.FOURNITURES,
+    "construction": MarketType.TRAVAUX,
+    "rehabilitation": MarketType.TRAVAUX,
+    "etudes": MarketType.PRESTATIONS_INTELLECTUELLES,
+    "consultants": MarketType.PRESTATIONS_INTELLECTUELLES,
+    "consultant_individuel": MarketType.CONSULTANT_INDIVIDUEL,
+}
+
+
+def _decree_2020_599(
+    scope: AuthorityScope,
+    passation: dict[MarketType, int],
+    control: dict[MarketType, int],
+    community: dict[MarketType, int],
+) -> ProcurementRules:
+    """Barème du décret : dispense ≤ 4 M ; DC ≤ 10 M ; DRP jusqu'au seuil de passation
+    (exclu) ; procédure du code des marchés à partir du seuil de passation (art. 1, 3 à 6)."""
+
+    def scale(market_type: MarketType, above_code: str, above_label: str):
+        return (
+            ProcedureThreshold(*_DISPENSE),
+            ProcedureThreshold(*_DC),
+            ProcedureThreshold("DRP", _DRP, passation[market_type] - 1),
+            ProcedureThreshold(above_code, above_label, None),
+        )
+
+    ao = ("AOO", "Appel d'offres ouvert")
+    return ProcurementRules(
+        version=f"decret-2020-599/{scope.value}",
+        thresholds={
+            MarketType.TRAVAUX: scale(MarketType.TRAVAUX, *ao),
+            MarketType.FOURNITURES: scale(MarketType.FOURNITURES, *ao),
+            MarketType.SERVICES: scale(MarketType.SERVICES, *ao),
+            MarketType.PRESTATIONS_INTELLECTUELLES: scale(
+                MarketType.PRESTATIONS_INTELLECTUELLES,
+                "AMI_DP",
+                "Appel à manifestation d'intérêt puis demande de propositions",
+            ),
+            MarketType.CONSULTANT_INDIVIDUEL: scale(
+                MarketType.CONSULTANT_INDIVIDUEL, "SCI", "Sélection de consultants individuels"
+            ),
+        },
+        steps=_STEPS,
+        control_thresholds=control,
+        community_thresholds=community,
+        category_types=_CATEGORY_TYPES,
+    )
+
+
+T, F, S = MarketType.TRAVAUX, MarketType.FOURNITURES, MarketType.SERVICES
+PI, PI_IND = MarketType.PRESTATIONS_INTELLECTUELLES, MarketType.CONSULTANT_INDIVIDUEL
+
+# Décret n° 2020-599 du 23 décembre 2020 (Bénin), montants en FCFA HT.
+# État et autorités contractantes autres que les communes sans statut particulier.
+# Contrôle DNCMP : art. 9.1 (le cas des établissements publics dont le chef de cellule
+# n'est pas délégué de contrôle relève de l'art. 9.2, à paramétrer par structure).
+BENIN_2020_599_ETAT = _decree_2020_599(
+    AuthorityScope.ETAT,
+    passation={T: 100_000_000, F: 70_000_000, S: 70_000_000, PI: 50_000_000, PI_IND: 20_000_000},
+    control={T: 500_000_000, F: 300_000_000, S: 300_000_000, PI: 200_000_000, PI_IND: 100_000_000},
+    community={T: 1_000_000_000, F: 500_000_000, S: 500_000_000, PI: 150_000_000,
+               PI_IND: 150_000_000},
+)  # fmt: skip
+
+# Communes sans statut particulier (art. 3 al. 2 et art. 9.2).
+BENIN_2020_599_COMMUNE = _decree_2020_599(
+    AuthorityScope.COMMUNE_SANS_STATUT,
+    passation={T: 35_000_000, F: 25_000_000, S: 25_000_000, PI: 20_000_000, PI_IND: 15_000_000},
+    control={T: 300_000_000, F: 150_000_000, S: 150_000_000, PI: 120_000_000, PI_IND: 80_000_000},
+    community={T: 1_000_000_000, F: 500_000_000, S: 500_000_000, PI: 150_000_000,
+               PI_IND: 150_000_000},
+)  # fmt: skip
+
+# Référentiel par défaut.
+BENIN_2020_599 = BENIN_2020_599_ETAT
 
 
 @dataclass(frozen=True)
@@ -210,6 +275,8 @@ class ProcurementLot:
     amount: int
     amount_ht: int
     procedure: ProcedureThreshold
+    control_body: str
+    community_publication: bool
     need_date: date
     launch_date: date
     steps: tuple[ScheduledStep, ...]
@@ -280,6 +347,8 @@ def build_lots(snapshot: PlanningSnapshot, rules: ProcurementRules) -> list[Proc
                 amount=amount,
                 amount_ht=amount_ht,
                 procedure=procedure,
+                control_body=rules.control_body_for(amount_ht, market_type),
+                community_publication=rules.requires_community_publication(amount_ht, market_type),
                 need_date=need_date,
                 launch_date=launch,
                 steps=steps,

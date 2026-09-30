@@ -2,7 +2,10 @@ from datetime import date
 
 from app.engines.budget_rules import Severity
 from app.engines.procurement import (
-    BENIN_2020_599_PROVISOIRE as RULES,
+    BENIN_2020_599 as RULES,
+)
+from app.engines.procurement import (
+    BENIN_2020_599_COMMUNE as COMMUNE,
 )
 from app.engines.procurement import (
     ManualLot,
@@ -38,15 +41,33 @@ def test_backward_schedule_ends_on_need_date(mission_snapshot):
     assert lot.launch_date == date(2027, 8, 2)  # 30 jours de demande de cotation
 
 
-def test_threshold_edges():
+def test_threshold_edges_decree_2020_599():
     assert RULES.procedure_for(4_000_000).code == "dispense"
     assert RULES.procedure_for(4_000_001).code == "DC"
     assert RULES.procedure_for(10_000_000).code == "DC"
     assert RULES.procedure_for(10_000_001).code == "DRP"
-    assert RULES.procedure_for(70_000_001).code == "AOO"
-    assert RULES.procedure_for(150_000_000, MarketType.TRAVAUX).code == "DRP"
-    pi = MarketType.PRESTATIONS_INTELLECTUELLES
-    assert RULES.procedure_for(60_000_000, pi).code == "AMI_DP"
+    # Seuil de passation : la procédure du code s'applique à partir du seuil (art. 1 et 3).
+    assert RULES.procedure_for(69_999_999).code == "DRP"
+    assert RULES.procedure_for(70_000_000).code == "AOO"
+    assert RULES.procedure_for(99_999_999, MarketType.TRAVAUX).code == "DRP"
+    assert RULES.procedure_for(100_000_000, MarketType.TRAVAUX).code == "AOO"
+    assert RULES.procedure_for(50_000_000, MarketType.PRESTATIONS_INTELLECTUELLES).code == "AMI_DP"
+    assert RULES.procedure_for(20_000_000, MarketType.CONSULTANT_INDIVIDUEL).code == "SCI"
+
+
+def test_communes_have_lower_thresholds():
+    assert COMMUNE.procedure_for(25_000_000).code == "AOO"
+    assert COMMUNE.procedure_for(34_999_999, MarketType.TRAVAUX).code == "DRP"
+    assert COMMUNE.procedure_for(35_000_000, MarketType.TRAVAUX).code == "AOO"
+
+
+def test_control_body_and_community_publication():
+    assert RULES.control_body_for(299_999_999, MarketType.FOURNITURES) == "CCMP"
+    assert RULES.control_body_for(300_000_000, MarketType.FOURNITURES) == "DNCMP"
+    assert RULES.control_body_for(500_000_000, MarketType.TRAVAUX) == "DNCMP"
+    assert COMMUNE.control_body_for(150_000_000, MarketType.SERVICES) == "DNCMP"
+    assert not RULES.requires_community_publication(499_999_999, MarketType.FOURNITURES)
+    assert RULES.requires_community_publication(1_000_000_000, MarketType.TRAVAUX)
 
 
 def test_vat_conversion():

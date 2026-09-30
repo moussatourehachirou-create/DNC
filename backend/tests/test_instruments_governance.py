@@ -11,7 +11,7 @@ from app.engines.governance import (
     evaluate,
 )
 from app.engines.instruments import build_ppm, build_pta, consumption_plan, totals
-from app.engines.procurement import BENIN_2020_599_PROVISOIRE as RULES
+from app.engines.procurement import BENIN_2020_599 as RULES
 
 
 def test_pta_and_ppm_derive_from_same_snapshot(mission_snapshot):
