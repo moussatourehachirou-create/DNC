@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { api } from "../api";
+import { api, BASIS_LABELS, type PriceBasis } from "../api";
 import { useSelection } from "../context";
 
 export default function HomePage() {
@@ -20,6 +20,11 @@ export default function HomePage() {
       setCode("");
       setName("");
     },
+  });
+  const currentOrg = orgs.data?.find((o) => o.id === organisationId) ?? null;
+  const setBasis = useMutation({
+    mutationFn: (basis: PriceBasis) => api.updateOrganisation(organisationId!, { price_basis: basis }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["organisations"] }),
   });
   const createVersion = useMutation({
     mutationFn: () => api.createVersion(organisationId!, year, `PTA ${year}`),
@@ -49,6 +54,25 @@ export default function HomePage() {
             </button>
           </div>
           {createOrg.error && <p className="error">{String(createOrg.error.message)}</p>}
+          {currentOrg && (
+            <div style={{ marginTop: 12 }}>
+              <label>
+                Borne de l'e-répertoire retenue par défaut pour programmer
+                <select
+                  value={currentOrg.price_basis ?? ""}
+                  onChange={(e) => e.target.value && setBasis.mutate(e.target.value as PriceBasis)}
+                  style={{ display: "block", marginTop: 4 }}
+                >
+                  <option value="">— à choisir —</option>
+                  <option value="bi">{BASIS_LABELS.bi}</option>
+                  <option value="bs">{BASIS_LABELS.bs}</option>
+                </select>
+              </label>
+              <p className="muted" style={{ fontSize: 12 }}>
+                Choix de la structure, modifiable ligne par ligne. Un prix hors fourchette est signalé.
+              </p>
+            </div>
+          )}
         </div>
         <div className="card">
           <strong>2. Ouvrir un PTA</strong>

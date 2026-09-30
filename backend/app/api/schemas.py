@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from decimal import Decimal
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -11,6 +12,12 @@ class OrganisationIn(BaseModel):
     kind: str = "ministere"
     parent_id: str | None = None
     financial_autonomy: bool = False
+    price_basis: Literal["bi", "bs"] | None = None
+
+
+class OrganisationPatch(BaseModel):
+    name: str | None = None
+    price_basis: Literal["bi", "bs"] | None = None
 
 
 class OrganisationOut(OrganisationIn):
@@ -36,6 +43,7 @@ class LineIn(BaseModel):
     frequency: Decimal = Decimal(1)
     price_source: str = "saisie"
     price_reference: str | None = None
+    price_basis: Literal["bi", "bs", "libre"] | None = None
     budget_line: str | None = None
     funding_source: str = "BN"
     execution_mode: str = "direct"

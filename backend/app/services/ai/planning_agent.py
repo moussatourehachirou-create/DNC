@@ -26,7 +26,7 @@ from sqlalchemy.orm import Session
 
 from app.core.config import get_settings
 from app.models.entities import NodeLevel, PlanNode, PriceEdition, PriceItem, ResourceLineRow
-from app.services import nomenclature
+from app.services import nomenclature, prices
 from app.services.classify import market_category
 from app.services.pta_import import norm
 
@@ -75,6 +75,7 @@ class CheckedResource:
     price_max: int | None
     price_source: str
     price_reference: str | None
+    price_basis: str | None  # bi ou bs, selon le choix de la structure ; None = à choisir
     budget_line: str | None
     budget_line_label: str | None
     execution_mode: str
@@ -191,7 +192,7 @@ def search_price_items(session: Session, query: str, limit: int = 8) -> list[dic
     items = session.scalars(stmt.limit(limit)).all()
     return [
         {"code": i.code, "designation": i.label, "unite": i.unit, "prix_bi": i.price_min,
-         "prix_bs": i.price_max, "nature": i.nature}
+         "prix_bs": i.price_max, "prix_unique": i.unit_price, "nature": i.nature}
         for i in items
     ]  # fmt: skip
 
@@ -300,7 +301,11 @@ def _historical_proposal(similar: list[SimilarActivity]) -> ActivityProposal:
 
 
 def check_proposal(
-    session: Session, activity_id: str, proposal: ActivityProposal, mode: str
+    session: Session,
+    activity_id: str,
+    proposal: ActivityProposal,
+    mode: str,
+    price_basis: str | None = None,
 ) -> CheckedProposal:
     """Reprise déterministe : prix de l'e-répertoire, natures vérifiées, points à revoir."""
     tasks = []
@@ -322,6 +327,9 @@ def check_proposal(
                 review.append(f"nature {nature} différente de celle de l'article ({item.nature})")
             if not nature:
                 review.append("imputation à préciser")
+            unit_price = prices.price_for_basis(item, price_basis) if item else None
+            if item and unit_price is None:
+                review.append("borne de prix à choisir (BI ou BS)")
             mode_exec = (
                 res.execution_mode
                 if res.execution_mode in ("direct", "indirect", "mixte")
@@ -332,11 +340,12 @@ def check_proposal(
                     label=res.label,
                     quantity=Decimal(str(res.quantity)),
                     unit=item.unit if item else res.unit,
-                    unit_price=item.unit_price if item else None,
+                    unit_price=unit_price,
                     price_min=item.price_min if item else None,
                     price_max=item.price_max if item else None,
                     price_source="repertoire" if item else "a_saisir",
                     price_reference=item.code if item else None,
+                    price_basis=price_basis if item and item.price_min is not None else None,
                     budget_line=nature,
                     budget_line_label=nomenclature.label_of(nature) if nature else None,
                     execution_mode=mode_exec,
@@ -352,7 +361,9 @@ def check_proposal(
     return CheckedProposal(activity_id, mode, tasks, proposal.sources, proposal.remarks)
 
 
-def propose_tasks(session: Session, activity: PlanNode, context: str = "") -> CheckedProposal:
+def propose_tasks(
+    session: Session, activity: PlanNode, context: str = "", price_basis: str | None = None
+) -> CheckedProposal:
     similar = similar_activities(session, activity)
     if get_settings().anthropic_api_key:
         proposal = _agent_proposal(session, activity, context, similar)
@@ -363,4 +374,4 @@ def propose_tasks(session: Session, activity: PlanNode, context: str = "") -> Ch
     else:
         proposal = ActivityProposal(tasks=[], remarks="Ni clé API ni historique disponible.")
         mode = "vide"
-    return check_proposal(session, activity.id, proposal, mode)
+    return check_proposal(session, activity.id, proposal, mode, price_basis)

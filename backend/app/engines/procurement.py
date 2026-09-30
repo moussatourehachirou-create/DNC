@@ -15,12 +15,14 @@ from __future__ import annotations
 
 from collections import defaultdict
 from dataclasses import dataclass, field
-from datetime import date, timedelta
+from datetime import date
 from decimal import Decimal
 from enum import StrEnum
 
 from app.engines.budget_rules import Severity, Violation
+from app.engines.calendar import DEFAULT_CALENDAR, WorkCalendar
 from app.engines.costing import to_fcfa
+from app.engines.procedures import ScheduledStep, schedule, template_for
 from app.engines.snapshot import PlanningSnapshot, ResourceLine
 
 UNCATEGORIZED = "non_categorise"
@@ -53,18 +55,12 @@ class ProcedureThreshold:
 
 
 @dataclass(frozen=True)
-class ProcedureStep:
-    code: str
-    label: str
-    duration_days: int
-
-
-@dataclass(frozen=True)
 class ProcurementRules:
     """Référentiel de passation d'un exercice et d'une catégorie d'autorité.
 
     - `thresholds` : barème croissant de procédures par type de marché ;
-    - `steps` : étapes et délais par code de procédure ;
+    - les étapes et délais de chaque procédure sont fixés par `procedures.template_for`
+      (loi n° 2020-26, décrets n° 2020-600 et 2020-605, manuel ARMP) ;
     - `control_thresholds` : montant HT à partir duquel l'organe national (DNCMP)
       exerce le contrôle a priori ; en dessous, la cellule de contrôle (CCMP) ;
     - `community_thresholds` : seuils UEMOA imposant la publication communautaire ;
@@ -75,7 +71,6 @@ class ProcurementRules:
 
     version: str
     thresholds: dict[MarketType, tuple[ProcedureThreshold, ...]]
-    steps: dict[str, tuple[ProcedureStep, ...]]
     control_thresholds: dict[MarketType, int] = field(default_factory=dict)
     community_thresholds: dict[MarketType, int] = field(default_factory=dict)
     national_control_body: str = "DNCMP"
@@ -84,6 +79,8 @@ class ProcurementRules:
     default_type: MarketType = MarketType.FOURNITURES
     costs_include_vat: bool = True
     vat_rate: Decimal = Decimal("0.18")
+    calendar: WorkCalendar = DEFAULT_CALENDAR
+    urgent: bool = False  # délais d'urgence (15 jours), sur autorisation de la DNCMP
 
     def market_type_of(self, category: str) -> MarketType:
         return self.category_types.get(category, self.default_type)
@@ -117,49 +114,6 @@ class ProcurementRules:
 _DISPENSE = ("dispense", "Dispense de procédure (3 devis)", 4_000_000)
 _DC = ("DC", "Demande de cotation", 10_000_000)
 _DRP = "Demande de renseignements et de prix"
-
-# Étapes calquées sur les colonnes des PPM officiels (MESTFP, MIC 2025) pour que
-# l'export remplisse directement le format attendu. Délais indicatifs, paramétrables.
-_STEPS_DRP_AO = lambda publication: (  # noqa: E731
-    ProcedureStep("reception_dossier", "Réception du dossier par l'organe de contrôle", 5),
-    ProcedureStep("avis_dossier", "Avis de non-objection sur le dossier", 5),
-    ProcedureStep("autorisation_lancement", "Autorisation de lancement", 3),
-    ProcedureStep("publication", "Publication de l'avis", 2),
-    ProcedureStep("ouverture_plis", "Ouverture des plis", publication),
-    ProcedureStep("evaluation", "Évaluation des offres", 10),
-    ProcedureStep("avis_evaluation", "Avis de non-objection sur l'évaluation", 5),
-    ProcedureStep("examen_juridique", "Examen juridique du contrat", 5),
-    ProcedureStep("approbation", "Approbation du contrat", 7),
-    ProcedureStep("notification", "Notification du contrat", 3),
-)
-
-_STEPS = {
-    "dispense": (
-        ProcedureStep("devis", "Consultation de trois fournisseurs", 5),
-        ProcedureStep("bon_commande", "Bon de commande et facture", 5),
-    ),
-    "DC": (
-        ProcedureStep("dossier", "Préparation du dossier de cotation", 7),
-        ProcedureStep("consultation", "Consultation des fournisseurs", 10),
-        ProcedureStep("evaluation", "Ouverture et évaluation", 7),
-        ProcedureStep("attribution", "Attribution et notification", 6),
-    ),
-    "DRP": _STEPS_DRP_AO(10),
-    "AOO": _STEPS_DRP_AO(30),
-    "AMI_DP": (
-        ProcedureStep("ami", "Appel à manifestation d'intérêt", 30),
-        ProcedureStep("evaluation_ami", "Évaluation des manifestations", 15),
-        ProcedureStep("demande_propositions", "Demande de propositions", 30),
-        ProcedureStep("evaluation_technique", "Évaluation technique", 15),
-        ProcedureStep("evaluation_financiere", "Évaluation financière", 10),
-        ProcedureStep("contrat", "Négociation, approbation, notification", 15),
-    ),
-    "SCI": (
-        ProcedureStep("avis", "Avis de sélection de consultants individuels", 20),
-        ProcedureStep("evaluation", "Comparaison des CV et évaluation", 15),
-        ProcedureStep("contrat", "Négociation, approbation, notification", 15),
-    ),
-}
 
 _CATEGORY_TYPES = {
     "impression": MarketType.SERVICES,
@@ -213,7 +167,6 @@ def _decree_2020_599(
                 MarketType.CONSULTANT_INDIVIDUEL, "SCI", "Sélection de consultants individuels"
             ),
         },
-        steps=_STEPS,
         control_thresholds=control,
         community_thresholds=community,
         category_types=_CATEGORY_TYPES,
@@ -259,14 +212,6 @@ class MarketNeed:
 
 
 @dataclass(frozen=True)
-class ScheduledStep:
-    code: str
-    label: str
-    start: date
-    end: date
-
-
-@dataclass(frozen=True)
 class ProcurementLot:
     id: str
     structure_id: str
@@ -278,7 +223,8 @@ class ProcurementLot:
     control_body: str
     community_publication: bool
     need_date: date
-    launch_date: date
+    launch_date: date  # publication de l'avis (lancement au PPM)
+    preparation_start: date  # début de la préparation du dossier
     steps: tuple[ScheduledStep, ...]
     needs: tuple[MarketNeed, ...]
 
@@ -310,20 +256,6 @@ def market_needs(snapshot: PlanningSnapshot) -> list[MarketNeed]:
     return needs
 
 
-def schedule_backwards(
-    need_date: date, steps: tuple[ProcedureStep, ...]
-) -> tuple[date, tuple[ScheduledStep, ...]]:
-    """Place les étapes à rebours pour que la dernière se termine à la date de besoin."""
-    scheduled: list[ScheduledStep] = []
-    end = need_date
-    for step in reversed(steps):
-        start = end - timedelta(days=step.duration_days)
-        scheduled.append(ScheduledStep(step.code, step.label, start, end))
-        end = start
-    scheduled.reverse()
-    return end, tuple(scheduled)
-
-
 def build_lots(snapshot: PlanningSnapshot, rules: ProcurementRules) -> list[ProcurementLot]:
     """Regroupe les besoins par structure et catégorie sur tout l'exercice."""
     groups: dict[tuple[str, str], list[MarketNeed]] = defaultdict(list)
@@ -337,7 +269,13 @@ def build_lots(snapshot: PlanningSnapshot, rules: ProcurementRules) -> list[Proc
         amount_ht = rules.to_ht(amount)
         procedure = rules.procedure_for(amount_ht, market_type)
         need_date = min(n.need_date for n in needs)
-        launch, steps = schedule_backwards(need_date, rules.steps.get(procedure.code, ()))
+        control_body = rules.control_body_for(amount_ht, market_type)
+        community = rules.requires_community_publication(amount_ht, market_type)
+        plan = schedule(
+            template_for(procedure.code, control_body, community, rules.urgent),
+            need_date,
+            rules.calendar,
+        )
         lots.append(
             ProcurementLot(
                 id=f"{structure_id}:{category}",
@@ -347,11 +285,12 @@ def build_lots(snapshot: PlanningSnapshot, rules: ProcurementRules) -> list[Proc
                 amount=amount,
                 amount_ht=amount_ht,
                 procedure=procedure,
-                control_body=rules.control_body_for(amount_ht, market_type),
-                community_publication=rules.requires_community_publication(amount_ht, market_type),
+                control_body=control_body,
+                community_publication=community,
                 need_date=need_date,
-                launch_date=launch,
-                steps=steps,
+                launch_date=plan.launch_date,
+                preparation_start=plan.preparation_start,
+                steps=plan.steps,
                 needs=tuple(sorted(needs, key=lambda n: (n.need_date, n.line_id))),
             )
         )
@@ -389,7 +328,21 @@ def check_lots(
                     line_ids=line_ids,
                 )
             )
-        elif lot.launch_date < year_start:
+        elif today is not None and lot.preparation_start < today:
+            violations.append(
+                Violation(
+                    code="preparation_en_retard",
+                    severity=Severity.WARNING,
+                    message=(
+                        f"Lot {lot.category} : la préparation du dossier devait commencer le "
+                        f"{lot.preparation_start:%d/%m/%Y} pour un lancement le "
+                        f"{lot.launch_date:%d/%m/%Y}."
+                    ),
+                    structure_id=lot.structure_id,
+                    line_ids=line_ids,
+                )
+            )
+        if lot.launch_date < year_start:
             violations.append(
                 Violation(
                     code="lancement_avant_exercice",

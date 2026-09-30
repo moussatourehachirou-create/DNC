@@ -135,4 +135,22 @@ def export_ppm(snapshot: PlanningSnapshot, lots: list[ProcurementLot], authority
             ]
             for col, value in enumerate(values, start=1):
                 ws.cell(row=4 + n, column=col, value=value)
+
+    detail = wb.create_sheet("Calendrier réglementaire")
+    detail["A1"] = "Délais : loi n° 2020-26, décrets n° 2020-600 et 2020-605, manuel ARMP (2023)"
+    detail["A1"].font = BOLD
+    _header(detail, 3, ["Lot", "Procédure", "Organe de contrôle", "Étape", "Début", "Fin",
+                        "Délai", "Base réglementaire"])  # fmt: skip
+    row = 4
+    for lot in ordered:
+        for step in lot.steps:
+            delay = f"{step.duration} j. {step.unit.value}" if step.duration else "échéance"
+            if step.indicative:
+                delay += " (indicatif)"
+            values = [lot.category.replace("_", " "), lot.procedure.label, lot.control_body,
+                      step.label, step.start.strftime("%d-%m-%Y"), step.end.strftime("%d-%m-%Y"),
+                      delay, step.basis]  # fmt: skip
+            for col, value in enumerate(values, start=1):
+                detail.cell(row=row, column=col, value=value)
+            row += 1
     return _save(wb)

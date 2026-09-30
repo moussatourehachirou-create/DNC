@@ -1,6 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { api, fcfa, LEVEL_LABELS, type PlanNode, type PriceHit, type Proposal } from "../api";
+import {
+  api,
+  BASIS_LABELS,
+  fcfa,
+  LEVEL_LABELS,
+  priceFor,
+  type PlanNode,
+  type PriceBasis,
+  type PriceHit,
+  type Proposal,
+} from "../api";
 import { useSelection } from "../context";
 
 function flatten(nodes: PlanNode[], depth = 0, out: { node: PlanNode; depth: number }[] = []) {
@@ -36,7 +46,7 @@ function PriceSearch({ onPick }: { onPick: (hit: PriceHit) => void }) {
                   </td>
                   <td>{h.unit}</td>
                   <td className="num">
-                    {h.price_min != null ? `${fcfa(h.price_min)} – ${fcfa(h.price_max)}` : fcfa(h.unit_price)}
+                    {h.price_min != null ? `BI ${fcfa(h.price_min)} – BS ${fcfa(h.price_max)}` : fcfa(h.unit_price)}
                   </td>
                 </tr>
               ))}
@@ -48,7 +58,15 @@ function PriceSearch({ onPick }: { onPick: (hit: PriceHit) => void }) {
   );
 }
 
-function AddLine({ node, onDone }: { node: PlanNode; onDone: () => void }) {
+function AddLine({
+  node,
+  defaultBasis,
+  onDone,
+}: {
+  node: PlanNode;
+  defaultBasis: PriceBasis | null;
+  onDone: () => void;
+}) {
   const [label, setLabel] = useState("");
   const [quantity, setQuantity] = useState("1");
   const [unit, setUnit] = useState("U");
@@ -56,6 +74,11 @@ function AddLine({ node, onDone }: { node: PlanNode; onDone: () => void }) {
   const [nature, setNature] = useState("");
   const [reference, setReference] = useState<string | null>(null);
   const [range, setRange] = useState<[number, number] | null>(null);
+  const [basis, setBasis] = useState<PriceBasis | "libre" | null>(null);
+  const chooseBasis = (value: PriceBasis | "libre") => {
+    setBasis(value);
+    if (range && value !== "libre") setUnitPrice(value === "bi" ? range[0] : range[1]);
+  };
   const [mode, setMode] = useState("direct");
   const [month, setMonth] = useState(node.start_month ?? 1);
   const create = useMutation({
@@ -68,6 +91,7 @@ function AddLine({ node, onDone }: { node: PlanNode; onDone: () => void }) {
         budget_line: nature || null,
         price_source: reference ? "repertoire" : "saisie",
         price_reference: reference,
+        price_basis: range ? basis : null,
         execution_mode: mode,
         need_month: month,
       }),
@@ -82,10 +106,12 @@ function AddLine({ node, onDone }: { node: PlanNode; onDone: () => void }) {
         onPick={(h) => {
           setLabel(h.label);
           setUnit(h.unit);
-          setUnitPrice(h.unit_price);
           setNature(h.nature ?? "");
           setReference(h.code);
-          setRange(h.price_min != null && h.price_max != null ? [h.price_min, h.price_max] : null);
+          const hasRange = h.price_min != null && h.price_max != null;
+          setRange(hasRange ? [h.price_min!, h.price_max!] : null);
+          setBasis(hasRange ? defaultBasis : null);
+          setUnitPrice(priceFor(h, defaultBasis) ?? 0);
           setMode(["6114", "6012"].includes(h.nature ?? "") ? "direct" : "indirect");
         }}
       />
@@ -113,10 +139,30 @@ function AddLine({ node, onDone }: { node: PlanNode; onDone: () => void }) {
             </option>
           ))}
         </select>
-        <button className="primary" disabled={!label || create.isPending} onClick={() => create.mutate()}>
+        <button
+          className="primary"
+          disabled={!label || create.isPending || (!!range && !basis)}
+          onClick={() => create.mutate()}
+        >
           Ajouter
         </button>
       </div>
+      {range && (
+        <div className="row" style={{ marginTop: 8 }}>
+          <span className="muted">Prix retenu :</span>
+          {(["bi", "bs"] as PriceBasis[]).map((b) => (
+            <label key={b} className="row" style={{ gap: 4 }}>
+              <input type="radio" checked={basis === b} onChange={() => chooseBasis(b)} />
+              {BASIS_LABELS[b]} — {fcfa(b === "bi" ? range[0] : range[1])}
+            </label>
+          ))}
+          <label className="row" style={{ gap: 4 }}>
+            <input type="radio" checked={basis === "libre"} onChange={() => chooseBasis("libre")} />
+            Prix libre
+          </label>
+          {!basis && <span className="badge soumis_a_validation">choisissez la borne</span>}
+        </div>
+      )}
       {outOfRange && range && (
         <p className="notice" style={{ marginTop: 8 }}>
           Prix hors de la fourchette de l'e-répertoire ({fcfa(range[0])} – {fcfa(range[1])}).
@@ -127,8 +173,20 @@ function AddLine({ node, onDone }: { node: PlanNode; onDone: () => void }) {
   );
 }
 
-function ProposalPanel({ node, onApplied }: { node: PlanNode; onApplied: () => void }) {
+function ProposalPanel({
+  node,
+  defaultBasis,
+  onApplied,
+}: {
+  node: PlanNode;
+  defaultBasis: PriceBasis | null;
+  onApplied: () => void;
+}) {
   const [proposal, setProposal] = useState<Proposal | null>(null);
+  const [basis, setBasis] = useState<PriceBasis | null>(defaultBasis);
+  const unitPrice = (r: Proposal["tasks"][number]["resources"][number]) =>
+    r.price_min != null ? priceFor(r, basis) : r.unit_price;
+  const missingBasis = proposal?.tasks.some((t) => t.resources.some((r) => r.price_min != null)) && !basis;
   const [accepted, setAccepted] = useState<Record<number, boolean>>({});
   const propose = useMutation({
     mutationFn: () => api.propose(node.id),
@@ -152,10 +210,11 @@ function ProposalPanel({ node, onApplied }: { node: PlanNode; onApplied: () => v
               label: r.label,
               quantity: r.quantity,
               unit: r.unit,
-              unit_price: r.unit_price ?? 0,
+              unit_price: unitPrice(r) ?? 0,
               budget_line: r.budget_line,
               price_source: r.price_source,
               price_reference: r.price_reference,
+              price_basis: r.price_min != null ? basis : null,
               execution_mode: r.execution_mode,
               market_category: r.market_category,
               need_month: r.need_month,
@@ -183,6 +242,14 @@ function ProposalPanel({ node, onApplied }: { node: PlanNode; onApplied: () => v
             {proposal.mode === "ia" ? "Proposition de l'agent" : "Proposition reprise de l'historique"} · total estimé{" "}
             {fcfa(proposal.total)}. {proposal.remarks}
           </p>
+          <div className="row">
+            <span className="muted">Borne de prix pour cette proposition :</span>
+            <select value={basis ?? ""} onChange={(e) => setBasis((e.target.value || null) as PriceBasis | null)}>
+              <option value="">— à choisir —</option>
+              <option value="bi">{BASIS_LABELS.bi}</option>
+              <option value="bs">{BASIS_LABELS.bs}</option>
+            </select>
+          </div>
           {proposal.tasks.map((task, i) => (
             <div key={i} style={{ borderTop: "1px solid var(--border)", paddingTop: 8, marginTop: 8 }}>
               <label className="row">
@@ -206,7 +273,9 @@ function ProposalPanel({ node, onApplied }: { node: PlanNode; onApplied: () => v
                           <div className="muted" style={{ fontSize: 12 }}>
                             {r.justification}
                           </div>
-                          {r.needs_review.map((m) => (
+                          {r.needs_review
+                            .filter((m) => !(basis && m.startsWith("borne de prix")))
+                            .map((m) => (
                             <div key={m} className="badge soumis_a_validation" style={{ marginTop: 2 }}>
                               {m}
                             </div>
@@ -215,8 +284,17 @@ function ProposalPanel({ node, onApplied }: { node: PlanNode; onApplied: () => v
                         <td className="num">
                           {r.quantity} {r.unit}
                         </td>
-                        <td className="num">{fcfa(r.unit_price)}</td>
-                        <td className="num">{fcfa(r.cost)}</td>
+                        <td className="num">
+                          {fcfa(unitPrice(r))}
+                          {r.price_min != null && (
+                            <div className="muted" style={{ fontSize: 12 }}>
+                              BI {fcfa(r.price_min)} – BS {fcfa(r.price_max)}
+                            </div>
+                          )}
+                        </td>
+                        <td className="num">
+                          {unitPrice(r) != null ? fcfa(Number(r.quantity) * (unitPrice(r) ?? 0)) : "—"}
+                        </td>
                         <td>{r.budget_line ?? "—"}</td>
                       </tr>
                     ))}
@@ -226,7 +304,12 @@ function ProposalPanel({ node, onApplied }: { node: PlanNode; onApplied: () => v
             </div>
           ))}
           <div className="row" style={{ marginTop: 12 }}>
-            <button className="primary" onClick={() => apply.mutate()} disabled={apply.isPending}>
+            <button
+              className="primary"
+              onClick={() => apply.mutate()}
+              disabled={apply.isPending || missingBasis}
+              title={missingBasis ? "Choisissez la borne de prix" : undefined}
+            >
               Ajouter les tâches retenues au PTA
             </button>
             <button onClick={() => setProposal(null)}>Écarter</button>
@@ -238,8 +321,10 @@ function ProposalPanel({ node, onApplied }: { node: PlanNode; onApplied: () => v
 }
 
 export default function PlanPage() {
-  const { versionId } = useSelection();
+  const { versionId, organisationId } = useSelection();
   const queryClient = useQueryClient();
+  const orgs = useQuery({ queryKey: ["organisations"], queryFn: api.organisations });
+  const defaultBasis = orgs.data?.find((o) => o.id === organisationId)?.price_basis ?? null;
   const tree = useQuery({ queryKey: ["tree", versionId], queryFn: () => api.tree(versionId!), enabled: !!versionId });
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [filter, setFilter] = useState("");
@@ -344,6 +429,7 @@ export default function PlanPage() {
                             {l.price_reference && (
                               <div className="muted" style={{ fontSize: 12 }}>
                                 e-répertoire {l.price_reference}
+                                {l.price_basis && ` · ${l.price_basis === "libre" ? "prix libre" : l.price_basis.toUpperCase()}`}
                               </div>
                             )}
                           </td>
@@ -365,8 +451,12 @@ export default function PlanPage() {
                   </table>
                 )}
               </div>
-              {selected.level === "activite" && <ProposalPanel node={selected} onApplied={refresh} />}
-              {["activite", "tache"].includes(selected.level) && <AddLine node={selected} onDone={refresh} />}
+              {selected.level === "activite" && (
+                <ProposalPanel key={selected.id} node={selected} defaultBasis={defaultBasis} onApplied={refresh} />
+              )}
+              {["activite", "tache"].includes(selected.level) && (
+                <AddLine key={selected.id} node={selected} defaultBasis={defaultBasis} onDone={refresh} />
+              )}
             </>
           )}
         </div>

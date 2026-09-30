@@ -16,13 +16,20 @@ REFERENTIALS = Path(__file__).resolve().parent.parent / "referentials"
 BUNDLED_EDITION = ("e-Répertoire des prix de référence v26.3 (19e édition, juin 2026)",
                    "e_repertoire_v26_3.csv.gz")  # fmt: skip
 
-# Prix retenu pour le chiffrage : la borne supérieure (BS) sert de plafond prudent pour
-# programmer ; tout prix saisi au-delà est signalé. Paramètre à valider avec la DNCF.
-PROGRAMMING_PRICE = "bs"
 
+def price_for_basis(item: PriceItem, basis: str | None) -> int | None:
+    """Prix d'un article selon la borne choisie par l'utilisateur (BI ou BS).
 
-def programming_price(price_min: int, price_max: int) -> int:
-    return price_max if PROGRAMMING_PRICE == "bs" else price_min
+    Un article sans fourchette (import Excel/CSV à prix unique) garde son prix. Sans
+    choix de borne, aucun prix n'est imposé : la décision revient à l'utilisateur.
+    """
+    if item.price_min is None or item.price_max is None:
+        return item.unit_price
+    if basis == "bi":
+        return item.price_min
+    if basis == "bs":
+        return item.price_max
+    return None
 
 
 def bundled_rows() -> list[dict]:
@@ -55,7 +62,7 @@ def load_edition(
                 nature=nature,
                 label=label_,
                 unit=unit,
-                unit_price=programming_price(bi, bs),
+                unit_price=None,
                 price_min=bi,
                 price_max=bs,
                 category=family or None,
@@ -79,3 +86,38 @@ def load_bundled_edition(session: Session) -> PriceEdition:
         session.delete(existing)
         session.flush()
     return load_edition(session, BUNDLED_EDITION[0], bundled_rows())
+
+
+def check_price_ranges(session: Session, version_id: str) -> list:
+    """Lignes dont le prix unitaire sort de la fourchette [BI, BS] de leur article."""
+    from app.engines.budget_rules import Severity, Violation
+    from app.engines.costing import PriceRange, check_against_range
+    from app.models.entities import PlanNode, ResourceLineRow
+
+    rows = session.execute(
+        select(ResourceLineRow, PriceItem)
+        .join(PlanNode, PlanNode.id == ResourceLineRow.node_id)
+        .join(PriceItem, PriceItem.code == ResourceLineRow.price_reference)
+        .where(PlanNode.version_id == version_id, PriceItem.price_min.is_not(None))
+    ).all()
+    violations = []
+    seen: set[str] = set()
+    for line, item in rows:
+        if line.id in seen:
+            continue
+        seen.add(line.id)
+        anomaly = check_against_range(
+            line.unit_price, PriceRange(item.code, item.price_min, item.price_max)
+        )
+        if anomaly:
+            violations.append(
+                Violation(
+                    code="prix_hors_fourchette",
+                    severity=Severity.APPROVAL,
+                    message=f"« {line.label[:60]} » : {anomaly.explanation}",
+                    structure_id=line.organisation_id,
+                    budget_line=line.budget_line,
+                    line_ids=(line.id,),
+                )
+            )
+    return violations

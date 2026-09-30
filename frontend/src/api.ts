@@ -1,6 +1,7 @@
 // Client de l'API BIE. Toutes les routes sont préfixées par /api (proxy Vite en dev).
 
-export type Organisation = { id: string; code: string; name: string; kind: string };
+export type PriceBasis = "bi" | "bs";
+export type Organisation = { id: string; code: string; name: string; kind: string; price_basis: PriceBasis | null };
 export type Version = { id: string; label: string; kind: string; status: string; fiscal_year_id: string };
 
 export type Line = {
@@ -18,6 +19,7 @@ export type Line = {
   need_month: number;
   price_source: string;
   price_reference: string | null;
+  price_basis: "bi" | "bs" | "libre" | null;
 };
 
 export type PlanNode = {
@@ -70,8 +72,18 @@ export type Lot = {
   community_publication: boolean;
   need_date: string;
   launch_date: string;
+  preparation_start: string;
   needs: number;
-  steps: { label: string; start: string; end: string }[];
+  steps: {
+    code: string;
+    label: string;
+    start: string;
+    end: string;
+    duration: number;
+    unit: "ouvrables" | "calendaires";
+    basis: string;
+    indicative: boolean;
+  }[];
 };
 
 export type Analysis = {
@@ -96,7 +108,7 @@ export type PriceHit = {
   code: string | null;
   label: string;
   unit: string;
-  unit_price: number;
+  unit_price: number | null;
   price_min: number | null;
   price_max: number | null;
   nature: string | null;
@@ -112,6 +124,7 @@ export type ProposedResource = {
   price_max: number | null;
   price_source: string;
   price_reference: string | null;
+  price_basis: PriceBasis | null;
   budget_line: string | null;
   budget_line_label: string | null;
   execution_mode: string;
@@ -155,6 +168,8 @@ export const api = {
   organisations: () => request<Organisation[]>("/organisations"),
   createOrganisation: (body: { code: string; name: string; kind: string }) =>
     request<Organisation>("/organisations", json("POST", body)),
+  updateOrganisation: (orgId: string, body: { price_basis: PriceBasis }) =>
+    request<Organisation>(`/organisations/${orgId}`, json("PATCH", body)),
   versions: (orgId: string) => request<Version[]>(`/organisations/${orgId}/versions`),
   createVersion: (orgId: string, year: number, label: string) => {
     const form = new FormData();
@@ -207,4 +222,20 @@ export const LEVEL_LABELS: Record<string, string> = {
   activite_budgetaire: "Activité budgétaire",
   activite: "Activité",
   tache: "Tâche",
+};
+
+/** Prix d'un article selon la borne choisie ; null si aucune borne n'est choisie. */
+export function priceFor(
+  hit: { unit_price: number | null; price_min: number | null; price_max: number | null },
+  basis: PriceBasis | null,
+): number | null {
+  if (hit.price_min == null || hit.price_max == null) return hit.unit_price;
+  if (basis === "bi") return hit.price_min;
+  if (basis === "bs") return hit.price_max;
+  return null;
+}
+
+export const BASIS_LABELS: Record<PriceBasis, string> = {
+  bi: "Borne inférieure (BI)",
+  bs: "Borne supérieure (BS)",
 };

@@ -91,6 +91,9 @@ class Organisation(Timestamped, Base):
     kind: Mapped[OrganisationType] = mapped_column(String(32))
     parent_id: Mapped[str | None] = mapped_column(ForeignKey("organisation.id"))  # tutelle
     financial_autonomy: Mapped[bool] = mapped_column(default=False)
+    # Borne de l'e-répertoire retenue par défaut pour programmer : « bi » ou « bs ».
+    # Choix de la structure (None tant qu'elle n'a pas décidé) ; modifiable ligne par ligne.
+    price_basis: Mapped[str | None] = mapped_column(String(4))
 
 
 class FiscalYear(Timestamped, Base):
@@ -173,6 +176,7 @@ class ResourceLineRow(Timestamped, Base):
     frequency: Mapped[Decimal] = mapped_column(Numeric(10, 3), default=Decimal(1))
     price_source: Mapped[str] = mapped_column(String(16), default="saisie")
     price_reference: Mapped[str | None] = mapped_column(String(128))
+    price_basis: Mapped[str | None] = mapped_column(String(8))  # bi, bs ou libre
     budget_line: Mapped[str | None] = mapped_column(String(32))  # nature économique
     funding_source: Mapped[str] = mapped_column(String(16), default="BN")
     execution_mode: Mapped[str] = mapped_column(String(16), default="direct")
@@ -221,7 +225,7 @@ class PriceItem(Base):
     code: Mapped[str | None] = mapped_column(String(64), index=True)
     label: Mapped[str] = mapped_column(Text)
     unit: Mapped[str] = mapped_column(String(32))
-    unit_price: Mapped[int] = mapped_column(Integer)  # prix retenu pour le chiffrage
+    unit_price: Mapped[int | None] = mapped_column(Integer)  # prix unique (hors e-répertoire)
     price_min: Mapped[int | None] = mapped_column(Integer)  # BI de l'e-répertoire
     price_max: Mapped[int | None] = mapped_column(Integer)  # BS de l'e-répertoire
     nature: Mapped[str | None] = mapped_column(String(8), index=True)  # imputation

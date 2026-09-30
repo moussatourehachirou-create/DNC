@@ -26,6 +26,7 @@ from app.api.schemas import (
     NodeOut,
     OrganisationIn,
     OrganisationOut,
+    OrganisationPatch,
     VersionOut,
 )
 from app.core.db import get_session
@@ -69,6 +70,18 @@ def _get(session: Session, model, id_: str):
 def create_organisation(body: OrganisationIn, session: Session = Depends(get_session)):
     org = Organisation(**body.model_dump())
     session.add(org)
+    session.commit()
+    return org
+
+
+@router.patch("/organisations/{org_id}", response_model=OrganisationOut)
+def update_organisation(
+    org_id: str, body: OrganisationPatch, session: Session = Depends(get_session)
+):
+    """Met à jour une structure, notamment la borne de prix retenue par défaut (BI ou BS)."""
+    org = _get(session, Organisation, org_id)
+    for key, value in body.model_dump(exclude_unset=True).items():
+        setattr(org, key, value)
     session.commit()
     return org
 
@@ -289,6 +302,7 @@ def analysis(version_id: str, today: date | None = None, session: Session = Depe
     violations = (
         check_envelopes(snapshot)
         + nomenclature.check_imputations(snapshot)
+        + prices.check_price_ranges(session, version_id)
         + check_lots(lots, snapshot.fiscal_year, today)
     )
     return {
@@ -318,8 +332,18 @@ def analysis(version_id: str, today: date | None = None, session: Session = Depe
                 "launch_date": lot.launch_date.isoformat(),
                 "needs": len(lot.needs),
                 "activity_ids": list(lot.activity_ids),
+                "preparation_start": lot.preparation_start.isoformat(),
                 "steps": [
-                    {"label": s.label, "start": s.start.isoformat(), "end": s.end.isoformat()}
+                    {
+                        "code": s.code,
+                        "label": s.label,
+                        "start": s.start.isoformat(),
+                        "end": s.end.isoformat(),
+                        "duration": s.duration,
+                        "unit": s.unit.value,
+                        "basis": s.basis,
+                        "indicative": s.indicative,
+                    }
                     for s in lot.steps
                 ],
             }
@@ -380,8 +404,9 @@ def propose(node_id: str, session: Session = Depends(get_session)):
     node = _get(session, PlanNode, node_id)
     parent = session.get(PlanNode, node.parent_id) if node.parent_id else None
     context = f"Rattachement : {parent.label}" if parent else ""
+    org = _get(session, Organisation, node.organisation_id)
     try:
-        proposal = planning_agent.propose_tasks(session, node, context)
+        proposal = planning_agent.propose_tasks(session, node, context, org.price_basis)
     except RuntimeError as exc:
         raise HTTPException(502, f"agent indisponible : {exc}") from exc
     return _proposal_json(proposal)

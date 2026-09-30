@@ -10,10 +10,10 @@ Le cahier des charges complet est tenu dans un document partagé ; l'analyse des
 | --- | --- |
 | Import | Import d'un PTA Excel existant, quel que soit le format du ministère : en-tête, colonnes AE/CP × sources, unité (FCFA ou milliers), niveaux (programme → tâche), contrôle des totaux, anomalies. Validé sur les PTA 2023-2026 de plusieurs ministères. |
 | Planification | Arbre programme → objectif → résultat → action → activité budgétaire → activité → tâche → ligne de ressource (quantité × prix unitaire). |
-| Prix | Référentiel propre à BIE, extrait de l'**e-répertoire des prix de référence v26.3** (9 732 articles, fourchettes BI–BS, nature économique portée par le code article). Contrôle des prix saisis hors fourchette. |
+| Prix | Référentiel propre à BIE, extrait de l'**e-répertoire des prix de référence v26.3** (9 732 articles, fourchettes BI–BS, nature économique portée par le code article). La borne retenue (BI ou BS) est choisie par la structure et modifiable ligne par ligne ; tout prix hors fourchette est signalé. |
 | Imputation | Nomenclature budgétaire du **décret n° 2014-794** (390 natures de dépense) : validation et recherche. |
 | Enveloppes | Autorisé, programmé, reliquat, taux, dépassement ; blocage ou dérogation selon la règle. |
-| Marchés | Regroupement des besoins par catégorie sur l'exercice (anti-fractionnement), procédures, organe de contrôle (DNCMP/CCMP) et publication UEMOA selon le **décret n° 2020-599** (État et communes), calendrier à rebours. |
+| Marchés | Regroupement des besoins par catégorie sur l'exercice (anti-fractionnement) ; procédure, organe de contrôle (DNCMP/CCMP) et publication UEMOA selon le **décret n° 2020-599** (État et communes) ; calendrier à rebours en jours ouvrables ou calendaires, étape par étape, selon la **loi n° 2020-26**, les **décrets n° 2020-600 et 2020-605** et le **manuel de procédures de l'ARMP (2023)**, chaque étape citant sa base réglementaire. |
 | Instruments | Exports Excel du PTA, du PCC (mensuel et trimestriel) et du PPM au format officiel à deux onglets. |
 | Gouvernance | Directives des autorités (plafond, interdiction, part minimale, période exclue), héritage entre niveaux. |
 | IA | Agent de planification : propose tâches et ressources d'une activité à partir des PTA antérieurs, en cherchant les articles dans l'e-répertoire et la nomenclature ; prix et imputations revérifiés de façon déterministe ; repli sans IA sur l'historique. |
@@ -64,6 +64,7 @@ uv run ruff check .
 
 ## Points à valider
 
-- Délais des étapes de passation (paramètres indicatifs) et règles propres aux établissements publics (art. 9.2 du décret n° 2020-599).
-- Prix retenu pour programmer : borne supérieure (BS) par défaut, à confirmer avec la DNCF.
+- Étapes sans délai fixé par les textes (préparation des dossiers de DRP et de DC, dispense), marquées « indicatif ».
+- Fêtes musulmanes (Ramadan, Tabaski, Maouloud) à renseigner chaque année dans le calendrier ouvré.
+- Règles propres aux établissements publics (art. 9.2 du décret n° 2020-599).
 - Formats d'export exacts attendus par la DGB et l'ARMP.

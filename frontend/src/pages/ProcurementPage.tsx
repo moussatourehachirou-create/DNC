@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { Fragment, useState } from "react";
 import { api, fcfa } from "../api";
 import { useSelection } from "../context";
 
@@ -14,6 +15,7 @@ const date = (iso: string) => new Date(iso).toLocaleDateString("fr-FR");
 
 export default function ProcurementPage() {
   const { versionId } = useSelection();
+  const [open, setOpen] = useState<string | null>(null);
   const analysis = useQuery({
     queryKey: ["analysis", versionId],
     queryFn: () => api.analysis(versionId!),
@@ -30,7 +32,8 @@ export default function ProcurementPage() {
       <p className="muted">
         Généré depuis le PTA : les lignes en mode indirect (et la part marché des lignes mixtes) sont regroupées par
         catégorie sur tout l'exercice, ce qui prévient le fractionnement. Procédures et organes de contrôle selon le
-        décret n° 2020-599 ({analysis.data.rules_version}).
+        décret n° 2020-599 ({analysis.data.rules_version}) ; délais selon la loi n° 2020-26, les décrets n° 2020-600 et
+        2020-605 et le manuel de procédures de l'ARMP. Cliquez sur un lot pour voir son calendrier réglementaire.
       </p>
       <div className="row" style={{ margin: "12px 0" }}>
         <a className="button primary" href={api.exportUrl(versionId, "ppm")}>
@@ -52,6 +55,7 @@ export default function ProcurementPage() {
               <th className="num">Montant HT</th>
               <th>Procédure</th>
               <th>Contrôle</th>
+              <th>Préparation</th>
               <th>Lancement</th>
               <th>Besoin</th>
               <th className="num">Besoins</th>
@@ -59,8 +63,11 @@ export default function ProcurementPage() {
           </thead>
           <tbody>
             {lots.map((lot) => (
-              <tr key={lot.id}>
-                <td>{lot.category.replaceAll("_", " ")}</td>
+              <Fragment key={lot.id}>
+              <tr onClick={() => setOpen(open === lot.id ? null : lot.id)} style={{ cursor: "pointer" }}>
+                <td>
+                  {open === lot.id ? "▾" : "▸"} {lot.category.replaceAll("_", " ")}
+                </td>
                 <td>{TYPES[lot.market_type] ?? lot.market_type}</td>
                 <td className="num">{fcfa(lot.amount_ht)}</td>
                 <td>{lot.procedure}</td>
@@ -69,12 +76,50 @@ export default function ProcurementPage() {
                   {lot.community_publication && <div className="badge">publication UEMOA</div>}
                 </td>
                 <td>
+                  {date(lot.preparation_start)}
+                  {lot.preparation_start < today && lot.launch_date >= today && (
+                    <div className="badge soumis_a_validation">en retard</div>
+                  )}
+                </td>
+                <td>
                   {date(lot.launch_date)}
                   {lot.launch_date < today && <div className="badge bloquant">dépassé</div>}
                 </td>
                 <td>{date(lot.need_date)}</td>
                 <td className="num">{lot.needs}</td>
               </tr>
+              {open === lot.id && (
+                <tr>
+                  <td colSpan={9} style={{ background: "var(--surface-2)" }}>
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Étape</th>
+                          <th>Début</th>
+                          <th>Fin</th>
+                          <th>Délai</th>
+                          <th>Base réglementaire</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {lot.steps.map((s) => (
+                          <tr key={s.code}>
+                            <td>{s.label}</td>
+                            <td>{date(s.start)}</td>
+                            <td>{date(s.end)}</td>
+                            <td>
+                              {s.duration ? `${s.duration} j. ${s.unit}` : "échéance"}
+                              {s.indicative && <div className="badge">indicatif</div>}
+                            </td>
+                            <td className="muted">{s.basis}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </td>
+                </tr>
+              )}
+              </Fragment>
             ))}
           </tbody>
         </table>
