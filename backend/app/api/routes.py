@@ -9,10 +9,12 @@ from __future__ import annotations
 from collections import Counter
 from dataclasses import asdict
 from datetime import date
+from decimal import Decimal
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, UploadFile
 from fastapi.responses import Response
-from sqlalchemy import or_, select
+from pydantic import BaseModel
+from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 
 from app.api.schemas import (
@@ -33,6 +35,7 @@ from app.engines.instruments import totals
 from app.engines.procurement import BENIN_2020_599, build_lots, check_lots
 from app.models.entities import (
     EnvelopeRow,
+    NodeLevel,
     Organisation,
     PlanNode,
     PlanVersion,
@@ -40,9 +43,10 @@ from app.models.entities import (
     PriceItem,
     ResourceLineRow,
 )
-from app.services import exports
+from app.services import exports, nomenclature, prices
+from app.services.ai import planning_agent
 from app.services.persist import get_or_create_year, save_import
-from app.services.price_import import parse_price_file
+from app.services.price_import import parse_price_file, parse_rpr_pdf
 from app.services.pta_import import ImportProfile, forfait_lines, parse_workbook
 from app.services.snapshot import build_snapshot
 
@@ -282,7 +286,11 @@ def analysis(version_id: str, today: date | None = None, session: Session = Depe
     except LookupError as exc:
         raise HTTPException(404, str(exc)) from exc
     lots = build_lots(snapshot, RULES)
-    violations = check_envelopes(snapshot) + check_lots(lots, snapshot.fiscal_year, today)
+    violations = (
+        check_envelopes(snapshot)
+        + nomenclature.check_imputations(snapshot)
+        + check_lots(lots, snapshot.fiscal_year, today)
+    )
     return {
         "fiscal_year": snapshot.fiscal_year,
         "totals": totals(snapshot),
@@ -341,6 +349,98 @@ def export(version_id: str, kind: str, session: Session = Depends(get_session)):
                     headers={"Content-Disposition": f'attachment; filename="{filename}"'})  # fmt: skip
 
 
+# --- Agent de planification (IA) ---------------------------------------------------
+
+
+def _proposal_json(proposal) -> dict:
+    return {
+        "activity_id": proposal.activity_id,
+        "mode": proposal.mode,
+        "total": proposal.total,
+        "sources": proposal.sources,
+        "remarks": proposal.remarks,
+        "tasks": [
+            {
+                "label": t.label,
+                "start_month": t.start_month,
+                "end_month": t.end_month,
+                "weight": t.weight,
+                "resources": [
+                    {**asdict(r), "quantity": str(r.quantity), "cost": r.cost} for r in t.resources
+                ],  # fmt: skip
+            }
+            for t in proposal.tasks
+        ],
+    }
+
+
+@router.post("/nodes/{node_id}/propose")
+def propose(node_id: str, session: Session = Depends(get_session)):
+    """Propose tâches et ressources pour une activité ; rien n'est écrit en base."""
+    node = _get(session, PlanNode, node_id)
+    parent = session.get(PlanNode, node.parent_id) if node.parent_id else None
+    context = f"Rattachement : {parent.label}" if parent else ""
+    try:
+        proposal = planning_agent.propose_tasks(session, node, context)
+    except RuntimeError as exc:
+        raise HTTPException(502, f"agent indisponible : {exc}") from exc
+    return _proposal_json(proposal)
+
+
+class AcceptedResource(LineIn):
+    pass
+
+
+class AcceptedTask(BaseModel):
+    label: str
+    start_month: int | None = None
+    end_month: int | None = None
+    weight: Decimal | None = None
+    resources: list[AcceptedResource] = []
+
+
+@router.post("/nodes/{node_id}/apply-proposal", response_model=list[NodeOut], status_code=201)
+def apply_proposal(
+    node_id: str, tasks: list[AcceptedTask], session: Session = Depends(get_session)
+):
+    """Enregistre les tâches et ressources acceptées (éventuellement modifiées) par l'utilisateur."""
+    activity = _get(session, PlanNode, node_id)
+    existing = session.scalars(select(PlanNode).where(PlanNode.parent_id == node_id)).all()
+    created = []
+    for offset, task in enumerate(tasks, start=len(existing) + 1):
+        node = PlanNode(
+            organisation_id=activity.organisation_id,
+            version_id=activity.version_id,
+            parent_id=activity.id,
+            level=NodeLevel.TACHE,
+            position=offset,
+            label=task.label,
+            start_month=task.start_month,
+            end_month=task.end_month,
+            weight=task.weight,
+            origin="ia",
+        )
+        session.add(node)
+        session.flush()
+        for res in task.resources:
+            session.add(
+                ResourceLineRow(
+                    organisation_id=activity.organisation_id, node_id=node.id, **res.model_dump()
+                )
+            )
+        created.append(node)
+    session.commit()
+    return [_node_out(n) for n in created]
+
+
+# --- Nomenclature budgétaire ----------------------------------------------------------
+
+
+@router.get("/referentials/natures")
+def search_natures(q: str = Query(min_length=2)):
+    return [{"code": n.code, "label": n.label, "parent": n.parent} for n in nomenclature.search(q)]
+
+
 # --- Référentiel de prix (e-répertoire) ---------------------------------------------
 
 
@@ -350,11 +450,26 @@ def import_prices(
     label: str = Form(...),
     session: Session = Depends(get_session),
 ):
+    """Importe une édition : PDF officiel de l'e-répertoire, ou Excel/CSV."""
+    filename = file.filename or ""
+    if filename.lower().endswith(".pdf"):
+        import tempfile
+
+        with tempfile.NamedTemporaryFile(suffix=".pdf") as tmp:
+            tmp.write(file.file.read())
+            tmp.flush()
+            articles, unread = parse_rpr_pdf(tmp.name)
+        if not articles:
+            raise HTTPException(422, "aucun article reconnu dans ce PDF")
+        edition = prices.load_edition(session, label, articles)
+        session.commit()
+        return {"edition_id": edition.id, "items": len(articles),
+                "rejected": [{"row": None, "reason": u} for u in unread[:200]]}  # fmt: skip
     try:
-        parsed = parse_price_file(file.file, file.filename or "")
+        parsed = parse_price_file(file.file, filename)
     except ValueError as exc:
         raise HTTPException(422, str(exc)) from exc
-    edition = PriceEdition(label=label, source_file=file.filename)
+    edition = PriceEdition(label=label, source_file=filename, status="active")
     session.add(edition)
     session.flush()
     for row in parsed.rows:
@@ -362,6 +477,15 @@ def import_prices(
     session.commit()
     return {"edition_id": edition.id, "items": len(parsed.rows),
             "rejected": [{"row": r, "reason": m} for r, m in parsed.rejected[:200]]}  # fmt: skip
+
+
+@router.post("/prices/editions/bundled", status_code=201)
+def load_bundled_prices(session: Session = Depends(get_session)):
+    """Charge l'édition de l'e-répertoire livrée avec BIE (v26.3)."""
+    edition = prices.load_bundled_edition(session)
+    session.commit()
+    count = session.scalar(select(func.count()).where(PriceItem.edition_id == edition.id))
+    return {"edition_id": edition.id, "label": edition.label, "items": count}
 
 
 @router.get("/prices/search")
@@ -374,9 +498,13 @@ def search_prices(
         stmt = stmt.where(or_(PriceItem.label.ilike(f"%{term}%"), PriceItem.code.ilike(f"{term}%")))
     if unit:
         stmt = stmt.where(PriceItem.unit == unit)
-    items = session.scalars(stmt.limit(30)).all()
+    active = select(PriceEdition.id).where(PriceEdition.status == "active")
+    stmt = stmt.where(or_(PriceItem.edition_id.in_(active), PriceItem.edition_id.is_(None)))
+    items = session.scalars(stmt.order_by(PriceItem.label).limit(30)).all()
     return [
         {"id": i.id, "code": i.code, "label": i.label, "unit": i.unit, "unit_price": i.unit_price,
+         "price_min": i.price_min, "price_max": i.price_max, "nature": i.nature,
+         "nature_label": nomenclature.label_of(i.nature) if i.nature else None,
          "zone": i.zone, "category": i.category, "source": i.source}
         for i in items
     ]  # fmt: skip

@@ -65,3 +65,15 @@ def test_median_price():
     assert median_price([]) is None
     assert median_price([3, 1, 2]) == 2
     assert median_price([1, 2, 3, 4]) == 3  # 2,5 arrondi
+
+
+def test_price_range_from_e_repertoire():
+    from app.engines.costing import PriceRange, check_against_range
+
+    bloc_note = PriceRange("6013 3321 128 1114", 600, 969)
+    assert check_against_range(800, bloc_note) is None
+    above = check_against_range(1_200, bloc_note)
+    assert above is not None and "borne supérieure" in above.explanation
+    assert above.reference_price == 969
+    below = check_against_range(500, bloc_note)
+    assert below is not None and "borne inférieure" in below.explanation

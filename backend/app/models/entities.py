@@ -221,6 +221,10 @@ class PriceItem(Base):
     code: Mapped[str | None] = mapped_column(String(64), index=True)
     label: Mapped[str] = mapped_column(Text)
     unit: Mapped[str] = mapped_column(String(32))
-    unit_price: Mapped[int] = mapped_column(Integer)
+    unit_price: Mapped[int] = mapped_column(Integer)  # prix retenu pour le chiffrage
+    price_min: Mapped[int | None] = mapped_column(Integer)  # BI de l'e-répertoire
+    price_max: Mapped[int | None] = mapped_column(Integer)  # BS de l'e-répertoire
+    nature: Mapped[str | None] = mapped_column(String(8), index=True)  # imputation
     zone: Mapped[str | None] = mapped_column(String(64))
-    category: Mapped[str | None] = mapped_column(String(128))
+    category: Mapped[str | None] = mapped_column(String(255))  # famille
+    specifications: Mapped[str | None] = mapped_column(Text)

@@ -9,7 +9,7 @@ def status_of(snapshot, budget_line):
 
 
 def test_envelope_status(mission_snapshot):
-    s = status_of(mission_snapshot, "6371")
+    s = status_of(mission_snapshot, "6114")
     assert s.authorized == 1_000_000
     assert s.programmed == 950_000  # per diem 600 000 + hébergement 350 000
     assert s.remaining == 50_000
@@ -20,7 +20,7 @@ def test_envelope_status(mission_snapshot):
 def test_alert_when_envelope_almost_consumed(mission_snapshot):
     violations = check_envelopes(mission_snapshot)
     codes = {(v.code, v.budget_line) for v in violations}
-    assert ("enveloppe_presque_epuisee", "6371") in codes
+    assert ("enveloppe_presque_epuisee", "6114") in codes
     assert can_submit(violations)
 
 
@@ -31,7 +31,7 @@ def test_overrun_blocks_submission(mission_snapshot):
     snapshot = replace(mission_snapshot, lines=lines)
     violations = check_envelopes(snapshot)
     overrun = next(v for v in violations if v.code == "depassement_enveloppe")
-    assert overrun.budget_line == "6371"
+    assert overrun.budget_line == "6114"
     assert overrun.severity == Severity.BLOCKING
     assert "125 000" in overrun.message
     assert set(overrun.line_ids) == {"l1", "l3"}

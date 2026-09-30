@@ -1,16 +1,4 @@
-import pytest
-from fastapi.testclient import TestClient
-
-from app.core import db
-from app.main import app
 from tests.test_pta_import import HEADER, ROWS, workbook
-
-
-@pytest.fixture
-def client(tmp_path):
-    db.configure(f"sqlite:///{tmp_path / 'bie.db'}")
-    with TestClient(app) as c:
-        yield c
 
 
 def create_org(client) -> str:
@@ -74,7 +62,7 @@ def test_manual_planning_with_lines(client):
     line = client.post(
         f"/api/nodes/{task['id']}/lines",
         json={"label": "Per diem", "quantity": "20", "unit": "jour", "unit_price": 30000,
-              "budget_line": "6371"},
+              "budget_line": "6114"},
     )  # fmt: skip
     assert line.status_code == 201 and line.json()["cost"] == 600_000
 

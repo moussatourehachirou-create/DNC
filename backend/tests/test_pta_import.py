@@ -121,3 +121,13 @@ def test_small_parsers():
     assert level_from_label("Activité opérattionnelle : X") == NodeLevel.ACTIVITE
     assert level_from_label("Actvité opérationnelles : X") == NodeLevel.ACTIVITE
     assert level_from_label("Tâche: Y") == NodeLevel.TACHE
+
+
+def test_split_price_pair_from_e_repertoire_layout():
+    from app.services.price_import import split_price_pair
+
+    assert split_price_pair("17 640 22 050".split()) == (17_640, 22_050)
+    assert split_price_pair("1 594 2 656".split()) == (1_594, 2_656)
+    assert split_price_pair("28 800 000 36 000 000".split()) == (28_800_000, 36_000_000)
+    assert split_price_pair("600 969".split()) == (600, 969)
+    assert split_price_pair("12".split()) is None

@@ -1,0 +1,761 @@
+{
+ "source": "Décret n° 2014-794, annexe II-3 (classification fonctionnelle)",
+ "items": [
+  {
+   "code": "01",
+   "label": "Services généraux des administrations publiques"
+  },
+  {
+   "code": "011",
+   "label": "Fonctionnement des organes exécutifs et législatifs, affaires financières et fiscales, affaires étrangères"
+  },
+  {
+   "code": "0111",
+   "label": "Fonctionnement des organes exécutifs et législatifs au niveau national"
+  },
+  {
+   "code": "0112",
+   "label": "Affaires financières et fiscales"
+  },
+  {
+   "code": "0113",
+   "label": "Affaires étrangères"
+  },
+  {
+   "code": "012",
+   "label": "Aide économique extérieure"
+  },
+  {
+   "code": "0121",
+   "label": "Aide économique aux pays en développement ou en transition"
+  },
+  {
+   "code": "0122",
+   "label": "Aide économique par l’intermédiaire d'organisations internationales"
+  },
+  {
+   "code": "013",
+   "label": "Services généraux"
+  },
+  {
+   "code": "0131",
+   "label": "Services généraux de personnel Services généraux de planification et de"
+  },
+  {
+   "code": "0132",
+   "label": "statistiques"
+  },
+  {
+   "code": "0139",
+   "label": "Autres services généraux"
+  },
+  {
+   "code": "014",
+   "label": "Recherche fondamentale"
+  },
+  {
+   "code": "0140",
+   "label": "Recherche fondamentale 015 Recherche – développement concernant les services généraux des administrations publiques 0150 Recherche-développement concernant les services généraux des administrations publiques"
+  },
+  {
+   "code": "016",
+   "label": "Services généraux des administrations publiques n.c.a. Services généraux des administrations publiques"
+  },
+  {
+   "code": "0160",
+   "label": "n.c.a."
+  },
+  {
+   "code": "017",
+   "label": "Opérations concernant la dette publique"
+  },
+  {
+   "code": "0170",
+   "label": "Opérations concernant la dette publique Transferts de caractère général entre les administrations"
+  },
+  {
+   "code": "018",
+   "label": "publiques"
+  },
+  {
+   "code": "0180",
+   "label": "Transferts de caractère général entre les administrations publiques"
+  },
+  {
+   "code": "02",
+   "label": "Défense"
+  },
+  {
+   "code": "021",
+   "label": "Défense militaire"
+  },
+  {
+   "code": "0210",
+   "label": "Défense militaire"
+  },
+  {
+   "code": "022",
+   "label": "Défense civile"
+  },
+  {
+   "code": "0220",
+   "label": "Défense civile"
+  },
+  {
+   "code": "023",
+   "label": "Aide militaire à des pays étrangers"
+  },
+  {
+   "code": "0230",
+   "label": "Aide militaire à des pays étrangers"
+  },
+  {
+   "code": "024",
+   "label": "R–D concernant la défense"
+  },
+  {
+   "code": "0240",
+   "label": "Recherche – développement concernant la défense"
+  },
+  {
+   "code": "025",
+   "label": "Défense n.c.a."
+  },
+  {
+   "code": "0250",
+   "label": "Défense n.c.a."
+  },
+  {
+   "code": "03",
+   "label": "Ordre et sécurité publics"
+  },
+  {
+   "code": "031",
+   "label": "Services de police et de gendarmerie"
+  },
+  {
+   "code": "0311",
+   "label": "Services de police"
+  },
+  {
+   "code": "0312",
+   "label": "Services de gendarmerie"
+  },
+  {
+   "code": "032",
+   "label": "Services de protection civile"
+  },
+  {
+   "code": "0320",
+   "label": "Services de protection civile"
+  },
+  {
+   "code": "033",
+   "label": "Tribunaux"
+  },
+  {
+   "code": "0330",
+   "label": "Tribunaux"
+  },
+  {
+   "code": "034",
+   "label": "Administration pénitentiaire"
+  },
+  {
+   "code": "0340",
+   "label": "Administration pénitentiaire"
+  },
+  {
+   "code": "035",
+   "label": "R–D concernant l’ordre et la sécurité publics"
+  },
+  {
+   "code": "0350",
+   "label": "Recherche – développement concernant l’ordre et la sécurité publics"
+  },
+  {
+   "code": "036",
+   "label": "Ordre et sécurité publics, n.c.a."
+  },
+  {
+   "code": "0360",
+   "label": "Ordre et sécurité publics, n.c.a."
+  },
+  {
+   "code": "04",
+   "label": "Affaires économiques"
+  },
+  {
+   "code": "041",
+   "label": "Tutelle de l’économie générale, des échanges et de l'emploi"
+  },
+  {
+   "code": "0411",
+   "label": "Tutelle de l’économie générale et des échanges"
+  },
+  {
+   "code": "0412",
+   "label": "Affaires générales concernant l’emploi"
+  },
+  {
+   "code": "042",
+   "label": "Agriculture, sylviculture, pêche, chasse et élevage"
+  },
+  {
+   "code": "0421",
+   "label": "Agriculture"
+  },
+  {
+   "code": "0422",
+   "label": "Sylviculture"
+  },
+  {
+   "code": "0423",
+   "label": "Pêche et chasse"
+  },
+  {
+   "code": "0424",
+   "label": "Elevage"
+  },
+  {
+   "code": "043",
+   "label": "Combustibles et énergie"
+  },
+  {
+   "code": "0431",
+   "label": "Charbon et autres combustibles minéraux solides"
+  },
+  {
+   "code": "0432",
+   "label": "Pétrole et gaz naturel"
+  },
+  {
+   "code": "0433",
+   "label": "Combustible nucléaire"
+  },
+  {
+   "code": "0434",
+   "label": "Autres combustibles"
+  },
+  {
+   "code": "0435",
+   "label": "Électricité"
+  },
+  {
+   "code": "0436",
+   "label": "Énergie non électrique"
+  },
+  {
+   "code": "044",
+   "label": "Industries extractives et manufacturières, construction 0441 Extraction de ressources minérales autres que les combustibles minéraux"
+  },
+  {
+   "code": "0442",
+   "label": "Industries manufacturières"
+  },
+  {
+   "code": "0443",
+   "label": "Construction"
+  },
+  {
+   "code": "045",
+   "label": "Transports"
+  },
+  {
+   "code": "0451",
+   "label": "Transports routiers"
+  },
+  {
+   "code": "0452",
+   "label": "Transports par voie d’eau"
+  },
+  {
+   "code": "0453",
+   "label": "Transports par voie ferrée"
+  },
+  {
+   "code": "0454",
+   "label": "Transports aériens"
+  },
+  {
+   "code": "0455",
+   "label": "Pipelines et systèmes de transport divers"
+  },
+  {
+   "code": "046",
+   "label": "Communication"
+  },
+  {
+   "code": "0460",
+   "label": "Communication"
+  },
+  {
+   "code": "047",
+   "label": "Autres branches d’activité"
+  },
+  {
+   "code": "0471",
+   "label": "Distribution, entrepôts et magasins"
+  },
+  {
+   "code": "0472",
+   "label": "Hôtellerie et restauration"
+  },
+  {
+   "code": "0473",
+   "label": "Tourisme"
+  },
+  {
+   "code": "0474",
+   "label": "Projets de développement polyvalents"
+  },
+  {
+   "code": "0475",
+   "label": "Artisanat Recherche – développement concernant les affaires"
+  },
+  {
+   "code": "048",
+   "label": "économiques"
+  },
+  {
+   "code": "0481",
+   "label": "Recherche – développement concernant la tutelle de l’économie, des échanges et de l’emploi"
+  },
+  {
+   "code": "0482",
+   "label": "Recherche – développement concernant l’agriculture, la sylviculture, la pêche, la chasse et l’élevage"
+  },
+  {
+   "code": "0483",
+   "label": "Recherche – développement concernant les combustibles et l’énergie"
+  },
+  {
+   "code": "0484",
+   "label": "Recherche – développement concernant les industries extractives et manufacturières et la construction"
+  },
+  {
+   "code": "0485",
+   "label": "Recherche – développement concernant les transports"
+  },
+  {
+   "code": "0486",
+   "label": "Recherche – développement concernant les communications 0487 Recherche – développement concernant les autres branches d’activité"
+  },
+  {
+   "code": "049",
+   "label": "Affaires économiques, n.c.a."
+  },
+  {
+   "code": "0490",
+   "label": "Affaires économiques, n.c.a."
+  },
+  {
+   "code": "05",
+   "label": "Protection de l’environnement"
+  },
+  {
+   "code": "051",
+   "label": "Gestion des déchets et ordures"
+  },
+  {
+   "code": "0510",
+   "label": "Gestion des déchets et ordures"
+  },
+  {
+   "code": "052",
+   "label": "Gestion des eaux usées"
+  },
+  {
+   "code": "0520",
+   "label": "Gestion des eaux usées"
+  },
+  {
+   "code": "053",
+   "label": "Lutte contre la pollution et les inondations"
+  },
+  {
+   "code": "0531",
+   "label": "Lutte contre la pollution"
+  },
+  {
+   "code": "0532",
+   "label": "Lutte contre les inondations Préservation de la diversité biologique et protection de la"
+  },
+  {
+   "code": "054",
+   "label": "nature Préservation de la diversité biologique et protection 0540 de la nature"
+  },
+  {
+   "code": "055",
+   "label": "Recherche – développement concernant la protection de l’environnement 0550 Recherche – développement concernant la protection de l’environnement"
+  },
+  {
+   "code": "056",
+   "label": "Protection de l’environnement, n.c.a."
+  },
+  {
+   "code": "0560",
+   "label": "Protection de l’environnement, n.c.a."
+  },
+  {
+   "code": "06",
+   "label": "Logement et équipements collectifs"
+  },
+  {
+   "code": "061",
+   "label": "Logement"
+  },
+  {
+   "code": "0610",
+   "label": "Logement"
+  },
+  {
+   "code": "062",
+   "label": "Équipements collectifs"
+  },
+  {
+   "code": "0620",
+   "label": "Equipements collectifs"
+  },
+  {
+   "code": "063",
+   "label": "Alimentation en eau"
+  },
+  {
+   "code": "0630",
+   "label": "Alimentation en eau potable"
+  },
+  {
+   "code": "064",
+   "label": "Éclairage public"
+  },
+  {
+   "code": "0640",
+   "label": "Éclairage public"
+  },
+  {
+   "code": "065",
+   "label": "Recherche – développement dans le domaine du logement et des équipements collectifs 0650 Recherche – développement dans le domaine du logement et des équipements collectifs"
+  },
+  {
+   "code": "066",
+   "label": "Logement et équipements collectifs, n.c.a."
+  },
+  {
+   "code": "0660",
+   "label": "Logement et équipements collectifs, n.c.a."
+  },
+  {
+   "code": "07",
+   "label": "Santé"
+  },
+  {
+   "code": "071",
+   "label": "Produits, appareils et matériels médicaux"
+  },
+  {
+   "code": "0711",
+   "label": "Produits pharmaceutiques"
+  },
+  {
+   "code": "0712",
+   "label": "Produits médicaux divers"
+  },
+  {
+   "code": "0713",
+   "label": "Appareils et matériels thérapeutiques"
+  },
+  {
+   "code": "0714",
+   "label": "Produits de Pharmacopée"
+  },
+  {
+   "code": "072",
+   "label": "Services ambulatoires"
+  },
+  {
+   "code": "0721",
+   "label": "Services de médecine générale"
+  },
+  {
+   "code": "0722",
+   "label": "Services de médecine spécialisée"
+  },
+  {
+   "code": "0723",
+   "label": "Services dentaires"
+  },
+  {
+   "code": "0724",
+   "label": "Services paramédicaux"
+  },
+  {
+   "code": "073",
+   "label": "Services hospitaliers"
+  },
+  {
+   "code": "0731",
+   "label": "Services hospitaliers généraux"
+  },
+  {
+   "code": "0732",
+   "label": "Services hospitaliers spécialisés"
+  },
+  {
+   "code": "0733",
+   "label": "Services des dispensaires et des maternités Services des maisons de repos et des maisons de"
+  },
+  {
+   "code": "0734",
+   "label": "sante"
+  },
+  {
+   "code": "074",
+   "label": "Services de santé publique"
+  },
+  {
+   "code": "0740",
+   "label": "Services de santé publique"
+  },
+  {
+   "code": "075",
+   "label": "Recherche – développement dans le domaine de la santé Recherche – développement dans le domaine de la"
+  },
+  {
+   "code": "0750",
+   "label": "santé"
+  },
+  {
+   "code": "076",
+   "label": "Santé, n.c.a."
+  },
+  {
+   "code": "0760",
+   "label": "Santé, n.c.a."
+  },
+  {
+   "code": "08",
+   "label": "Loisirs, culture et culte"
+  },
+  {
+   "code": "081",
+   "label": "Services récréatifs et sportifs"
+  },
+  {
+   "code": "0810",
+   "label": "Services récréatifs et sportifs"
+  },
+  {
+   "code": "082",
+   "label": "Services culturels"
+  },
+  {
+   "code": "0820",
+   "label": "Services culturels"
+  },
+  {
+   "code": "083",
+   "label": "Services de radiodiffusion, de télévision et d'édition"
+  },
+  {
+   "code": "0830",
+   "label": "Services de radiodiffusion, de télévision et d'édition"
+  },
+  {
+   "code": "084",
+   "label": "Culte et autres services communautaires"
+  },
+  {
+   "code": "0840",
+   "label": "Culte et autres services communautaires"
+  },
+  {
+   "code": "085",
+   "label": "R–D dans le domaine des loisirs, de la culture et du culte 0850 Recherche – développement dans le domaine des loisirs, de la culture et du culte"
+  },
+  {
+   "code": "086",
+   "label": "Loisirs, culture et culte, n.c.a."
+  },
+  {
+   "code": "0860",
+   "label": "Loisirs, culture et culte, n.c.a."
+  },
+  {
+   "code": "09",
+   "label": "Enseignement"
+  },
+  {
+   "code": "091",
+   "label": "Enseignements préélémentaire et primaire"
+  },
+  {
+   "code": "0911",
+   "label": "Enseignement préélémentaire"
+  },
+  {
+   "code": "0912",
+   "label": "Enseignement primaire"
+  },
+  {
+   "code": "092",
+   "label": "Enseignement secondaire"
+  },
+  {
+   "code": "0921",
+   "label": "1er cycle de l’enseignement secondaire général"
+  },
+  {
+   "code": "0922",
+   "label": "2ème cycle de l’enseignement secondaire général"
+  },
+  {
+   "code": "0923",
+   "label": "1er cycle de l’enseignement secondaire technique et professionnel"
+  },
+  {
+   "code": "0924",
+   "label": "2ème cycle de l’enseignement secondaire technique et professionnel"
+  },
+  {
+   "code": "093",
+   "label": "Enseignement post-secondaire non supérieur"
+  },
+  {
+   "code": "0930",
+   "label": "Enseignement post-secondaire non supérieur"
+  },
+  {
+   "code": "094",
+   "label": "Enseignement supérieur"
+  },
+  {
+   "code": "0941",
+   "label": "Enseignement supérieur non doctoral"
+  },
+  {
+   "code": "0942",
+   "label": "Enseignement supérieur doctoral"
+  },
+  {
+   "code": "0943",
+   "label": "Enseignement supérieur technique et professionnel niveau 1"
+  },
+  {
+   "code": "0944",
+   "label": "Enseignement supérieur technique et professionnel niveau 2"
+  },
+  {
+   "code": "095",
+   "label": "Enseignement non défini par niveau"
+  },
+  {
+   "code": "0950",
+   "label": "Enseignement non défini par niveau"
+  },
+  {
+   "code": "096",
+   "label": "Services annexes à l’enseignement"
+  },
+  {
+   "code": "0960",
+   "label": "Services annexes à l’enseignement Recherche – développement dans le domaine de"
+  },
+  {
+   "code": "097",
+   "label": "l’enseignement"
+  },
+  {
+   "code": "0970",
+   "label": "Recherche – développement dans le domaine de l’enseignement"
+  },
+  {
+   "code": "098",
+   "label": "Enseignement, n.c.a."
+  },
+  {
+   "code": "0980",
+   "label": "Enseignement, n.c.a."
+  },
+  {
+   "code": "10",
+   "label": "Protection sociale"
+  },
+  {
+   "code": "101",
+   "label": "Maladie et invalidité"
+  },
+  {
+   "code": "1011",
+   "label": "Maladie"
+  },
+  {
+   "code": "1012",
+   "label": "Invalidité"
+  },
+  {
+   "code": "102",
+   "label": "Vieillesse"
+  },
+  {
+   "code": "1020",
+   "label": "Vieillesse"
+  },
+  {
+   "code": "103",
+   "label": "Survivants"
+  },
+  {
+   "code": "1030",
+   "label": "Survivants"
+  },
+  {
+   "code": "104",
+   "label": "Famille et enfants"
+  },
+  {
+   "code": "1040",
+   "label": "Famille et enfants"
+  },
+  {
+   "code": "105",
+   "label": "Chômage"
+  },
+  {
+   "code": "1050",
+   "label": "Chômage"
+  },
+  {
+   "code": "106",
+   "label": "Logement"
+  },
+  {
+   "code": "1060",
+   "label": "Logement"
+  },
+  {
+   "code": "107",
+   "label": "Exclusion sociale, n.c.a."
+  },
+  {
+   "code": "1070",
+   "label": "Exclusion sociale, n.c.a."
+  },
+  {
+   "code": "108",
+   "label": "Recherche – développement dans le domaine de la protection sociale"
+  },
+  {
+   "code": "1080",
+   "label": "Recherche – développement dans le domaine de la protection sociale"
+  },
+  {
+   "code": "109",
+   "label": "Protection sociale, n.c.a."
+  },
+  {
+   "code": "1090",
+   "label": "Protection sociale, n.c.a."
+  }
+ ]
+}

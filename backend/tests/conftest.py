@@ -1,6 +1,7 @@
 from decimal import Decimal
 
 import pytest
+from fastapi.testclient import TestClient
 
 from app.engines.snapshot import (
     Activity,
@@ -10,6 +11,17 @@ from app.engines.snapshot import (
     ResourceLine,
     Task,
 )
+
+
+@pytest.fixture
+def client(tmp_path):
+    """Client HTTP sur une base SQLite jetable."""
+    from app.core import db
+    from app.main import app
+
+    db.configure(f"sqlite:///{tmp_path / 'bie.db'}")
+    with TestClient(app) as c:
+        yield c
 
 
 def line(id, activity, task, label, qty, unit, price, **kw) -> ResourceLine:
@@ -30,10 +42,10 @@ def line(id, activity, task, label, qty, unit, price, **kw) -> ResourceLine:
 def mission_snapshot() -> PlanningSnapshot:
     """Activité « missions trimestrielles de suivi » du cahier des charges + une formation."""
     lines = (
-        line("l1", "a1", "t1", "Per diem", 20, "jour", 30_000, budget_line="6371", need_month=3),
-        line("l2", "a1", "t1", "Carburant", 300, "litre", 700, budget_line="6041", need_month=3),
+        line("l1", "a1", "t1", "Per diem", 20, "jour", 30_000, budget_line="6114", need_month=3),
+        line("l2", "a1", "t1", "Carburant", 300, "litre", 700, budget_line="6012", need_month=3),
         line(
-            "l3", "a1", "t1", "Hébergement", 10, "nuitée", 35_000, budget_line="6371", need_month=3
+            "l3", "a1", "t1", "Hébergement", 10, "nuitée", 35_000, budget_line="6114", need_month=3
         ),
         line(
             "l4",
@@ -43,7 +55,7 @@ def mission_snapshot() -> PlanningSnapshot:
             50,
             "unité",
             2_000,
-            budget_line="6053",
+            budget_line="6229",
             execution_mode=ExecutionMode.INDIRECT,
             market_category="impression",
             need_month=6,
@@ -56,7 +68,7 @@ def mission_snapshot() -> PlanningSnapshot:
             1_000,
             "unité",
             3_500,
-            budget_line="6053",
+            budget_line="6229",
             execution_mode=ExecutionMode.INDIRECT,
             market_category="impression",
             need_month=9,
@@ -69,7 +81,7 @@ def mission_snapshot() -> PlanningSnapshot:
             1,
             "forfait",
             8_000_000,
-            budget_line="6222",
+            budget_line="6299",
             execution_mode=ExecutionMode.MIXTE,
             market_share=Decimal("0.75"),
             market_category="restauration",
@@ -95,9 +107,9 @@ def mission_snapshot() -> PlanningSnapshot:
         ),
         lines=lines,
         envelopes=(
-            Envelope("DPP", "6371", "BN", 1_000_000),
-            Envelope("DPP", "6041", "BN", 5_000_000),
-            Envelope("DPP", "6053", "BN", 3_700_000),
-            Envelope("DPP", "6222", "BN", 10_000_000),
+            Envelope("DPP", "6114", "BN", 1_000_000),
+            Envelope("DPP", "6012", "BN", 5_000_000),
+            Envelope("DPP", "6229", "BN", 3_700_000),
+            Envelope("DPP", "6299", "BN", 10_000_000),
         ),
     )

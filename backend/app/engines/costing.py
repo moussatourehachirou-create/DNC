@@ -139,3 +139,32 @@ def median_price(observed: list[int]) -> int | None:
     if len(values) % 2:
         return values[mid]
     return to_fcfa((Decimal(values[mid - 1]) + Decimal(values[mid])) / 2)
+
+
+@dataclass(frozen=True)
+class PriceRange:
+    """Fourchette de l'e-répertoire : borne inférieure (BI) et borne supérieure (BS)."""
+
+    reference: str
+    price_min: int
+    price_max: int
+
+
+def check_against_range(entered_price: int, price_range: PriceRange) -> PriceAnomaly | None:
+    """Un prix hors de [BI, BS] est signalé ; au-dessus de BS, il excède le prix plafond."""
+    if price_range.price_min <= entered_price <= price_range.price_max:
+        return None
+    if entered_price > price_range.price_max:
+        bound, direction = price_range.price_max, "au-dessus de la borne supérieure"
+    else:
+        bound, direction = price_range.price_min, "en dessous de la borne inférieure"
+    deviation = (Decimal(entered_price) - Decimal(bound)) / Decimal(bound)
+    return PriceAnomaly(
+        entered_price=entered_price,
+        reference_price=bound,
+        deviation=deviation,
+        explanation=(
+            f"Prix saisi {entered_price:,} FCFA, {direction} "
+            f"({bound:,} FCFA, article {price_range.reference} de l'e-répertoire)."
+        ).replace(",", " "),
+    )

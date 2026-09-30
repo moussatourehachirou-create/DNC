@@ -1,0 +1,2345 @@
+{
+ "source": "Décret n° 2014-794 du 31 décembre 2014 portant nomenclature budgétaire de l'État, annexe II-4 (classification par nature de dépenses)",
+ "items": [
+  {
+   "code": "60",
+   "label": "ACHATS DE BIENS",
+   "level": 2,
+   "parent": null
+  },
+  {
+   "code": "601",
+   "label": "Matières, matériel et fournitures",
+   "level": 3,
+   "parent": "60"
+  },
+  {
+   "code": "6011",
+   "label": "Achat de matières et de petits matériels",
+   "level": 4,
+   "parent": "601"
+  },
+  {
+   "code": "6012",
+   "label": "Carburants et lubrifiants",
+   "level": 4,
+   "parent": "601"
+  },
+  {
+   "code": "6013",
+   "label": "Fournitures de bureau",
+   "level": 4,
+   "parent": "601"
+  },
+  {
+   "code": "6014",
+   "label": "Produits biomédicaux et médicaments",
+   "level": 4,
+   "parent": "601"
+  },
+  {
+   "code": "6015",
+   "label": "Produits agricoles et alimentaires",
+   "level": 4,
+   "parent": "601"
+  },
+  {
+   "code": "6016",
+   "label": "Pièces de rechanges matériels",
+   "level": 4,
+   "parent": "601"
+  },
+  {
+   "code": "6017",
+   "label": "Documentation et abonnement",
+   "level": 4,
+   "parent": "601"
+  },
+  {
+   "code": "6019",
+   "label": "Autres achats de matières, matériels et fournitures",
+   "level": 4,
+   "parent": "601"
+  },
+  {
+   "code": "603",
+   "label": "Variations des stocks de biens fongibles achetés",
+   "level": 3,
+   "parent": "60"
+  },
+  {
+   "code": "6031",
+   "label": "Variation de stocks de matières et de petits matériels",
+   "level": 4,
+   "parent": "603"
+  },
+  {
+   "code": "6032",
+   "label": "Variation de stocks de matières premières",
+   "level": 4,
+   "parent": "603"
+  },
+  {
+   "code": "6039",
+   "label": "Variation de stocks d’autres approvisionnements",
+   "level": 4,
+   "parent": "603"
+  },
+  {
+   "code": "605",
+   "label": "Eau, électricité, gaz et autres sources d’énergie",
+   "level": 3,
+   "parent": "60"
+  },
+  {
+   "code": "6051",
+   "label": "Branchements et raccordement des compteurs",
+   "level": 4,
+   "parent": "605"
+  },
+  {
+   "code": "6052",
+   "label": "Abonnement et consommation d’eau",
+   "level": 4,
+   "parent": "605"
+  },
+  {
+   "code": "6053",
+   "label": "Abonnement et consommation d’électricité",
+   "level": 4,
+   "parent": "605"
+  },
+  {
+   "code": "6054",
+   "label": "Abonnement et consommation de gaz",
+   "level": 4,
+   "parent": "605"
+  },
+  {
+   "code": "6059",
+   "label": "Autres sources d’énergie",
+   "level": 4,
+   "parent": "605"
+  },
+  {
+   "code": "606",
+   "label": "Matériel et fournitures spécifiques",
+   "level": 3,
+   "parent": "60"
+  },
+  {
+   "code": "6061",
+   "label": "Petits matériels et fournitures techniques",
+   "level": 4,
+   "parent": "606"
+  },
+  {
+   "code": "6062",
+   "label": "Produits pharmaceutiques, médicaux et vétérinaires",
+   "level": 4,
+   "parent": "606"
+  },
+  {
+   "code": "6063",
+   "label": "Habillement, campement et couchage",
+   "level": 4,
+   "parent": "606"
+  },
+  {
+   "code": "6069",
+   "label": "Autres matériels et fournitures spécifiques",
+   "level": 4,
+   "parent": "606"
+  },
+  {
+   "code": "609",
+   "label": "Autres achats de biens",
+   "level": 3,
+   "parent": "60"
+  },
+  {
+   "code": "6099",
+   "label": "Autres achats de biens",
+   "level": 4,
+   "parent": "609"
+  },
+  {
+   "code": "61",
+   "label": "ACQUISITIONS DE SERVICES",
+   "level": 2,
+   "parent": null
+  },
+  {
+   "code": "611",
+   "label": "Frais de transport et de mission",
+   "level": 3,
+   "parent": "61"
+  },
+  {
+   "code": "6111",
+   "label": "Frais de transport à l’intérieur",
+   "level": 4,
+   "parent": "611"
+  },
+  {
+   "code": "6112",
+   "label": "Frais de transport à l’extérieur",
+   "level": 4,
+   "parent": "611"
+  },
+  {
+   "code": "6113",
+   "label": "Frais de transport des évacuations sanitaires",
+   "level": 4,
+   "parent": "611"
+  },
+  {
+   "code": "6114",
+   "label": "Indemnités de mission à l’intérieur",
+   "level": 4,
+   "parent": "611"
+  },
+  {
+   "code": "6115",
+   "label": "Indemnités de mission à l’extérieur",
+   "level": 4,
+   "parent": "611"
+  },
+  {
+   "code": "6116",
+   "label": "Frais de transport et indemnités de mission des missionnaires non agents de l’Etat",
+   "level": 4,
+   "parent": "611"
+  },
+  {
+   "code": "6117",
+   "label": "Frais de voyage des coopérants et autres expatriés",
+   "level": 4,
+   "parent": "611"
+  },
+  {
+   "code": "9118",
+   "label": "Frais de transport pour déplacement définitif",
+   "level": 4,
+   "parent": null
+  },
+  {
+   "code": "6119",
+   "label": "Autres frais de transport et de mission",
+   "level": 4,
+   "parent": "611"
+  },
+  {
+   "code": "612",
+   "label": "Loyers et charges locatives",
+   "level": 3,
+   "parent": "61"
+  },
+  {
+   "code": "6121",
+   "label": "Loyers et charges locatives des bâtiments administratifs",
+   "level": 4,
+   "parent": "612"
+  },
+  {
+   "code": "6122",
+   "label": "Loyers et charges locatives des salles de conférence",
+   "level": 4,
+   "parent": "612"
+  },
+  {
+   "code": "6123",
+   "label": "Location de machines et de matériel technique",
+   "level": 4,
+   "parent": "612"
+  },
+  {
+   "code": "6124",
+   "label": "Location de matériel informatique",
+   "level": 4,
+   "parent": "612"
+  },
+  {
+   "code": "6125",
+   "label": "Location de matériel de télécommunication",
+   "level": 4,
+   "parent": "612"
+  },
+  {
+   "code": "6126",
+   "label": "Location de véhicules",
+   "level": 4,
+   "parent": "612"
+  },
+  {
+   "code": "6127",
+   "label": "Redevances de crédit-bail",
+   "level": 4,
+   "parent": "612"
+  },
+  {
+   "code": "6129",
+   "label": "Autres charges locatives",
+   "level": 4,
+   "parent": "612"
+  },
+  {
+   "code": "614",
+   "label": "Entretien et maintenance",
+   "level": 3,
+   "parent": "61"
+  },
+  {
+   "code": "6141",
+   "label": "Entretien des terrains et plantations",
+   "level": 4,
+   "parent": "614"
+  },
+  {
+   "code": "6142",
+   "label": "Entretien et réparation des immeubles",
+   "level": 4,
+   "parent": "614"
+  },
+  {
+   "code": "6143",
+   "label": "Entretien et réparation des routes, aérodromes, ouvrages et infrastructures",
+   "level": 4,
+   "parent": "614"
+  },
+  {
+   "code": "6144",
+   "label": "Entretien et réparation du matériel de transport",
+   "level": 4,
+   "parent": "614"
+  },
+  {
+   "code": "6145",
+   "label": "Entretien et réparation des avions, navires et autres véhicules spéciaux",
+   "level": 4,
+   "parent": "614"
+  },
+  {
+   "code": "6146",
+   "label": "Entretien et réparation du mobilier et matériel informatique et de bureau",
+   "level": 4,
+   "parent": "614"
+  },
+  {
+   "code": "6147",
+   "label": "Entretien et réparation du mobilier et matériel (autres informatiques) et outillages techniques",
+   "level": 4,
+   "parent": "614"
+  },
+  {
+   "code": "6148",
+   "label": "Entretien et maintenance des installations (électriques, climatiseurs, sanitaires, plomberie, ascenseurs)",
+   "level": 4,
+   "parent": "614"
+  },
+  {
+   "code": "6149",
+   "label": "Travaux divers d’entretien et de maintenance",
+   "level": 4,
+   "parent": "614"
+  },
+  {
+   "code": "615",
+   "label": "Assurances",
+   "level": 3,
+   "parent": "61"
+  },
+  {
+   "code": "6151",
+   "label": "Assurances au profit du personnel exerçant des fonctions spécifiques",
+   "level": 4,
+   "parent": "615"
+  },
+  {
+   "code": "6152",
+   "label": "Assurances au profit des autorités politiques et administratives",
+   "level": 4,
+   "parent": "615"
+  },
+  {
+   "code": "6153",
+   "label": "Assurances des immeubles et autres infrastructures",
+   "level": 4,
+   "parent": "615"
+  },
+  {
+   "code": "6154",
+   "label": "Assurances des véhicules automobiles",
+   "level": 4,
+   "parent": "615"
+  },
+  {
+   "code": "6155",
+   "label": "Assurances des matériels et équipements",
+   "level": 4,
+   "parent": "615"
+  },
+  {
+   "code": "6156",
+   "label": "Assurances des avions, navires et autres véhicules spécifiques",
+   "level": 4,
+   "parent": "615"
+  },
+  {
+   "code": "6157",
+   "label": "Mutuelle d’assurances",
+   "level": 4,
+   "parent": "615"
+  },
+  {
+   "code": "6159",
+   "label": "Autres frais d’assurance",
+   "level": 4,
+   "parent": "615"
+  },
+  {
+   "code": "617",
+   "label": "Frais de relations publiques",
+   "level": 3,
+   "parent": "61"
+  },
+  {
+   "code": "6171",
+   "label": "Frais de relations publiques",
+   "level": 4,
+   "parent": "617"
+  },
+  {
+   "code": "6179",
+   "label": "Autres Frais de relations publiques",
+   "level": 4,
+   "parent": "617"
+  },
+  {
+   "code": "618",
+   "label": "Dépenses de communications",
+   "level": 3,
+   "parent": "61"
+  },
+  {
+   "code": "6181",
+   "label": "Frais postaux",
+   "level": 4,
+   "parent": "618"
+  },
+  {
+   "code": "6182",
+   "label": "Frais de télécommunications",
+   "level": 4,
+   "parent": "618"
+  },
+  {
+   "code": "6183",
+   "label": "Abonnement et consommation internet",
+   "level": 4,
+   "parent": "618"
+  },
+  {
+   "code": "6184",
+   "label": "Franchises militaires",
+   "level": 4,
+   "parent": "618"
+  },
+  {
+   "code": "6185",
+   "label": "Transmissions radio",
+   "level": 4,
+   "parent": "618"
+  },
+  {
+   "code": "6186",
+   "label": "Frais Communiqués de presse, radio, télévision et frais de publicité",
+   "level": 4,
+   "parent": "618"
+  },
+  {
+   "code": "6189",
+   "label": "Autres dépenses de communication",
+   "level": 4,
+   "parent": "618"
+  },
+  {
+   "code": "62",
+   "label": "AUTRES SERVICES",
+   "level": 2,
+   "parent": null
+  },
+  {
+   "code": "621",
+   "label": "Frais bancaires",
+   "level": 3,
+   "parent": "62"
+  },
+  {
+   "code": "6211",
+   "label": "Frais bancaires",
+   "level": 4,
+   "parent": "621"
+  },
+  {
+   "code": "622",
+   "label": "Prestations de services",
+   "level": 3,
+   "parent": "62"
+  },
+  {
+   "code": "6221",
+   "label": "Honoraires, commission, courtages et conseils",
+   "level": 4,
+   "parent": "622"
+  },
+  {
+   "code": "6222",
+   "label": "Frais d’impression",
+   "level": 4,
+   "parent": "622"
+  },
+  {
+   "code": "6223",
+   "label": "Frais de gardiennage",
+   "level": 4,
+   "parent": "622"
+  },
+  {
+   "code": "6224",
+   "label": "Frais d’actes et de contentieux",
+   "level": 4,
+   "parent": "622"
+  },
+  {
+   "code": "6225",
+   "label": "Redevance aux agences de presse",
+   "level": 4,
+   "parent": "622"
+  },
+  {
+   "code": "6229",
+   "label": "Frais d’autres prestations de services",
+   "level": 4,
+   "parent": "622"
+  },
+  {
+   "code": "623",
+   "label": "Frais de formation du personnel",
+   "level": 3,
+   "parent": "62"
+  },
+  {
+   "code": "6231",
+   "label": "Prestation des organismes de formation résidents",
+   "level": 4,
+   "parent": "623"
+  },
+  {
+   "code": "6232",
+   "label": "Prestation des organismes de formation non résidents",
+   "level": 4,
+   "parent": "623"
+  },
+  {
+   "code": "6233",
+   "label": "Indemnité de formation à l’étranger",
+   "level": 4,
+   "parent": "623"
+  },
+  {
+   "code": "6234",
+   "label": "Transport des agents en formation à l’étranger",
+   "level": 4,
+   "parent": "623"
+  },
+  {
+   "code": "6235",
+   "label": "Indemnités de formation à l’intérieur",
+   "level": 4,
+   "parent": "623"
+  },
+  {
+   "code": "6236",
+   "label": "Transport des agents en formation à l’intérieur",
+   "level": 4,
+   "parent": "623"
+  },
+  {
+   "code": "6239",
+   "label": "Autres frais de formation",
+   "level": 4,
+   "parent": "623"
+  },
+  {
+   "code": "624",
+   "label": "Redevances pour brevets, licences et logiciels",
+   "level": 3,
+   "parent": "62"
+  },
+  {
+   "code": "6241",
+   "label": "Redevances pour brevets, licences et logiciels",
+   "level": 4,
+   "parent": "624"
+  },
+  {
+   "code": "6249",
+   "label": "Autres Redevances pour brevets, licences et logiciels",
+   "level": 4,
+   "parent": "624"
+  },
+  {
+   "code": "629",
+   "label": "Autres acquisitions de services",
+   "level": 3,
+   "parent": "62"
+  },
+  {
+   "code": "6291",
+   "label": "Frais d'organisation des examens, concours et tests",
+   "level": 4,
+   "parent": "629"
+  },
+  {
+   "code": "6292",
+   "label": "Frais de conférence, congrès et séminaire",
+   "level": 4,
+   "parent": "629"
+  },
+  {
+   "code": "6294",
+   "label": "Impôts, taxes et versements assimilés payés par l'Etat",
+   "level": 4,
+   "parent": "629"
+  },
+  {
+   "code": "6295",
+   "label": "Enquêtes, vérifications, contrôles et audits",
+   "level": 4,
+   "parent": "629"
+  },
+  {
+   "code": "6296",
+   "label": "Frais d’élections",
+   "level": 4,
+   "parent": "629"
+  },
+  {
+   "code": "6297",
+   "label": "Foire, fête et cérémonie",
+   "level": 4,
+   "parent": "629"
+  },
+  {
+   "code": "6298",
+   "label": "Fonds spéciaux, sécurité",
+   "level": 4,
+   "parent": "629"
+  },
+  {
+   "code": "6299",
+   "label": "Autres acquisitions de services",
+   "level": 4,
+   "parent": "629"
+  },
+  {
+   "code": "63",
+   "label": "SUBVENTIONS",
+   "level": 2,
+   "parent": null
+  },
+  {
+   "code": "631",
+   "label": "Subventions aux entreprises publiques",
+   "level": 3,
+   "parent": "63"
+  },
+  {
+   "code": "6311",
+   "label": "Subventions d'équilibre - personnel",
+   "level": 4,
+   "parent": "631"
+  },
+  {
+   "code": "6312",
+   "label": "Subventions d'équilibre - fonctionnement",
+   "level": 4,
+   "parent": "631"
+  },
+  {
+   "code": "6313",
+   "label": "Subventions d'exploitation",
+   "level": 4,
+   "parent": "631"
+  },
+  {
+   "code": "6314",
+   "label": "Subvention d’investissement",
+   "level": 4,
+   "parent": "631"
+  },
+  {
+   "code": "6315",
+   "label": "Subventions -Prime à l'exportation",
+   "level": 4,
+   "parent": "631"
+  },
+  {
+   "code": "6316",
+   "label": "Subventions – soutien des prix",
+   "level": 4,
+   "parent": "631"
+  },
+  {
+   "code": "6319",
+   "label": "Autres subventions",
+   "level": 4,
+   "parent": "631"
+  },
+  {
+   "code": "632",
+   "label": "Subventions aux entreprises privées",
+   "level": 3,
+   "parent": "63"
+  },
+  {
+   "code": "6321",
+   "label": "Subventions d’équilibre - personnel",
+   "level": 4,
+   "parent": "632"
+  },
+  {
+   "code": "6322",
+   "label": "Subventions d'équilibre - fonctionnement",
+   "level": 4,
+   "parent": "632"
+  },
+  {
+   "code": "6323",
+   "label": "Subventions -Prime à l'exportation",
+   "level": 4,
+   "parent": "632"
+  },
+  {
+   "code": "6324",
+   "label": "Subventions – soutien des prix",
+   "level": 4,
+   "parent": "632"
+  },
+  {
+   "code": "6324",
+   "label": "Subventions d’exploitation",
+   "level": 4,
+   "parent": "632"
+  },
+  {
+   "code": "6325",
+   "label": "Subventions d’investissement",
+   "level": 4,
+   "parent": "632"
+  },
+  {
+   "code": "6329",
+   "label": "Autres subventions",
+   "level": 4,
+   "parent": "632"
+  },
+  {
+   "code": "634",
+   "label": "Subventions aux institutions financières",
+   "level": 3,
+   "parent": "63"
+  },
+  {
+   "code": "6341",
+   "label": "Subventions d’équilibre - personnel",
+   "level": 4,
+   "parent": "634"
+  },
+  {
+   "code": "6342",
+   "label": "Subventions d'équilibre - fonctionnement",
+   "level": 4,
+   "parent": "634"
+  },
+  {
+   "code": "6342",
+   "label": "Subventions d’exploitation",
+   "level": 4,
+   "parent": "634"
+  },
+  {
+   "code": "6343",
+   "label": "Subvention d’investissement",
+   "level": 4,
+   "parent": "634"
+  },
+  {
+   "code": "639",
+   "label": "Subventions à d’autres catégories de bénéficiaires",
+   "level": 3,
+   "parent": "63"
+  },
+  {
+   "code": "6391",
+   "label": "Subventions à d’autres catégories de bénéficiaires",
+   "level": 4,
+   "parent": "639"
+  },
+  {
+   "code": "64",
+   "label": "TRANSFERTS",
+   "level": 2,
+   "parent": null
+  },
+  {
+   "code": "641",
+   "label": "Transferts aux établissements publics nationaux",
+   "level": 3,
+   "parent": "64"
+  },
+  {
+   "code": "6411",
+   "label": "Transferts d’équilibre - personnel",
+   "level": 4,
+   "parent": "641"
+  },
+  {
+   "code": "6412",
+   "label": "Transferts d'équilibre - fonctionnement",
+   "level": 4,
+   "parent": "641"
+  },
+  {
+   "code": "6413",
+   "label": "Transferts d’investissement",
+   "level": 4,
+   "parent": "641"
+  },
+  {
+   "code": "642",
+   "label": "Transferts aux collectivités locales",
+   "level": 3,
+   "parent": "64"
+  },
+  {
+   "code": "6421",
+   "label": "Transferts aux communes- Personnel",
+   "level": 4,
+   "parent": "642"
+  },
+  {
+   "code": "6422",
+   "label": "Transfert aux communes- Fonctionnement",
+   "level": 4,
+   "parent": "642"
+  },
+  {
+   "code": "6423",
+   "label": "Transfert aux communes- Investissement",
+   "level": 4,
+   "parent": "642"
+  },
+  {
+   "code": "643",
+   "label": "Transferts aux autres administrations publiques",
+   "level": 3,
+   "parent": "64"
+  },
+  {
+   "code": "6431",
+   "label": "Transferts aux départements- Personnel",
+   "level": 4,
+   "parent": "643"
+  },
+  {
+   "code": "6432",
+   "label": "Transfert aux départements- Fonctionnement",
+   "level": 4,
+   "parent": "643"
+  },
+  {
+   "code": "6433",
+   "label": "Transfert aux départements- Investissement",
+   "level": 4,
+   "parent": "643"
+  },
+  {
+   "code": "6434",
+   "label": "Transferts aux fonds autonomes- Personnel",
+   "level": 4,
+   "parent": "643"
+  },
+  {
+   "code": "6435",
+   "label": "Transferts aux fonds autonomes- Fonctionnement",
+   "level": 4,
+   "parent": "643"
+  },
+  {
+   "code": "6436",
+   "label": "Transferts aux fonds autonomes- Investissement",
+   "level": 4,
+   "parent": "643"
+  },
+  {
+   "code": "6437",
+   "label": "Transfert aux institutions constitutionnelles",
+   "level": 4,
+   "parent": "643"
+  },
+  {
+   "code": "644",
+   "label": "Transferts aux institutions à buts non lucratif",
+   "level": 3,
+   "parent": "64"
+  },
+  {
+   "code": "6441",
+   "label": "Transferts aux ONG",
+   "level": 4,
+   "parent": "644"
+  },
+  {
+   "code": "6442",
+   "label": "Transferts aux institutions éducatives et médico- sociales",
+   "level": 4,
+   "parent": "644"
+  },
+  {
+   "code": "6443",
+   "label": "Transferts aux associations et autres organismes à but non lucratif",
+   "level": 4,
+   "parent": "644"
+  },
+  {
+   "code": "645",
+   "label": "Transferts aux ménages",
+   "level": 3,
+   "parent": "64"
+  },
+  {
+   "code": "6451",
+   "label": "Transferts pour bourses nationales",
+   "level": 4,
+   "parent": "645"
+  },
+  {
+   "code": "6452",
+   "label": "Transferts pour bourses à l’étranger",
+   "level": 4,
+   "parent": "645"
+  },
+  {
+   "code": "6453",
+   "label": "Transferts pour pécules et indemnités aux stagiaires, étudiants et élèves hors fonctionnaires",
+   "level": 4,
+   "parent": "645"
+  },
+  {
+   "code": "6454",
+   "label": "Transferts pour transport des élèves et étudiants",
+   "level": 4,
+   "parent": "645"
+  },
+  {
+   "code": "6455",
+   "label": "Aides et secours aux sinistrés et indigents, obsèques notabilités",
+   "level": 4,
+   "parent": "645"
+  },
+  {
+   "code": "6456",
+   "label": "Transferts pour indemnités de licenciement",
+   "level": 4,
+   "parent": "645"
+  },
+  {
+   "code": "6457",
+   "label": "Récompense aux lauréats de prix (hors agents de l’Etat)",
+   "level": 4,
+   "parent": "645"
+  },
+  {
+   "code": "6459",
+   "label": "Autres transferts",
+   "level": 4,
+   "parent": "645"
+  },
+  {
+   "code": "646",
+   "label": "Transferts aux autorités supranationales et contributions aux organisations internationales",
+   "level": 3,
+   "parent": "64"
+  },
+  {
+   "code": "6461",
+   "label": "Transferts aux autorités supranationales",
+   "level": 4,
+   "parent": "646"
+  },
+  {
+   "code": "6462",
+   "label": "Transferts aux organisations internationales",
+   "level": 4,
+   "parent": "646"
+  },
+  {
+   "code": "647",
+   "label": "Transferts à d’autres budgets",
+   "level": 3,
+   "parent": "64"
+  },
+  {
+   "code": "6471",
+   "label": "Transferts aux budgets annexes",
+   "level": 4,
+   "parent": "647"
+  },
+  {
+   "code": "6472",
+   "label": "Transferts aux comptes spéciaux du Trésor",
+   "level": 4,
+   "parent": "647"
+  },
+  {
+   "code": "648",
+   "label": "Pensions de retraites des fonctionnaires et autres agents de l’Etat",
+   "level": 3,
+   "parent": "64"
+  },
+  {
+   "code": "6481",
+   "label": "Pensions de retraites des fonctionnaires et autres agents de l'Etat civils",
+   "level": 4,
+   "parent": "648"
+  },
+  {
+   "code": "6482",
+   "label": "Pensions de retraites des fonctionnaires et autres agents de l'Etat militaires",
+   "level": 4,
+   "parent": "648"
+  },
+  {
+   "code": "649",
+   "label": "Autres transferts",
+   "level": 3,
+   "parent": "64"
+  },
+  {
+   "code": "6499",
+   "label": "Autres transferts",
+   "level": 4,
+   "parent": "649"
+  },
+  {
+   "code": "65",
+   "label": "CHARGES EXCEPTIONNELLES",
+   "level": 2,
+   "parent": null
+  },
+  {
+   "code": "651",
+   "label": "Annulations de produits constatés au cours des années antérieures",
+   "level": 3,
+   "parent": "65"
+  },
+  {
+   "code": "6511",
+   "label": "Remboursement de la TVA",
+   "level": 4,
+   "parent": "651"
+  },
+  {
+   "code": "6512",
+   "label": "Redevances",
+   "level": 4,
+   "parent": "651"
+  },
+  {
+   "code": "6513",
+   "label": "Reversement de recettes/remboursement des droits indûment perçus",
+   "level": 4,
+   "parent": "651"
+  },
+  {
+   "code": "6514",
+   "label": "Exonérations fiscales",
+   "level": 4,
+   "parent": "651"
+  },
+  {
+   "code": "6519",
+   "label": "Autres annulations, reversements et restitutions",
+   "level": 4,
+   "parent": "651"
+  },
+  {
+   "code": "652",
+   "label": "Condamnations et transactions",
+   "level": 3,
+   "parent": "65"
+  },
+  {
+   "code": "6521",
+   "label": "Indemnisations et transactions amiables",
+   "level": 4,
+   "parent": "652"
+  },
+  {
+   "code": "6522",
+   "label": "Dépenses consécutives à des jugements et condamnations",
+   "level": 4,
+   "parent": "652"
+  },
+  {
+   "code": "6523",
+   "label": "Indemnités d’éviction",
+   "level": 4,
+   "parent": "652"
+  },
+  {
+   "code": "654",
+   "label": "Valeurs comptables des immobilisations cédées, mises au rebut ou admises en non valeur",
+   "level": 3,
+   "parent": "65"
+  },
+  {
+   "code": "6541",
+   "label": "Valeurs comptables des immobilisations cédées",
+   "level": 4,
+   "parent": "654"
+  },
+  {
+   "code": "6542",
+   "label": "Valeurs comptables des immobilisations mises au rebut ou admises en non valeur",
+   "level": 4,
+   "parent": "654"
+  },
+  {
+   "code": "657",
+   "label": "Risques liés aux engagements de l’Etat",
+   "level": 3,
+   "parent": "65"
+  },
+  {
+   "code": "6571",
+   "label": "Risques liés aux engagements de l’Etat",
+   "level": 4,
+   "parent": "657"
+  },
+  {
+   "code": "659",
+   "label": "Autres charges exceptionnelles",
+   "level": 3,
+   "parent": "65"
+  },
+  {
+   "code": "6599",
+   "label": "Autres charges exceptionnelles",
+   "level": 4,
+   "parent": "659"
+  },
+  {
+   "code": "66",
+   "label": "CHARGES DE PERSONNEL",
+   "level": 2,
+   "parent": null
+  },
+  {
+   "code": "661",
+   "label": "Traitements et salaires en espèces",
+   "level": 3,
+   "parent": "66"
+  },
+  {
+   "code": "6611",
+   "label": "Traitements de base des fonctionnaires militaires",
+   "level": 4,
+   "parent": "661"
+  },
+  {
+   "code": "6612",
+   "label": "Traitements de base des fonctionnaires civils",
+   "level": 4,
+   "parent": "661"
+  },
+  {
+   "code": "6613",
+   "label": "Traitements des fonctionnaires en stage",
+   "level": 4,
+   "parent": "661"
+  },
+  {
+   "code": "6614",
+   "label": "Arriérés de traitements et salaires",
+   "level": 4,
+   "parent": "661"
+  },
+  {
+   "code": "6615",
+   "label": "Salaires des agents occasionnels",
+   "level": 4,
+   "parent": "661"
+  },
+  {
+   "code": "6616",
+   "label": "Salaires des gens de maison",
+   "level": 4,
+   "parent": "661"
+  },
+  {
+   "code": "6617",
+   "label": "Salaires des agents contractuels",
+   "level": 4,
+   "parent": "661"
+  },
+  {
+   "code": "6618",
+   "label": "Versement de pécules",
+   "level": 4,
+   "parent": "661"
+  },
+  {
+   "code": "6619",
+   "label": "Autres traitements et salaires",
+   "level": 4,
+   "parent": "661"
+  },
+  {
+   "code": "663",
+   "label": "Primes et indemnités",
+   "level": 3,
+   "parent": "66"
+  },
+  {
+   "code": "6631",
+   "label": "Primes et indemnités statutaires permanentes (résidence, logement, spécialisation, qualification, technicité, risque)",
+   "level": 4,
+   "parent": "663"
+  },
+  {
+   "code": "6632",
+   "label": "Primes de rendement",
+   "level": 4,
+   "parent": "663"
+  },
+  {
+   "code": "6633",
+   "label": "Indemnités de mutation",
+   "level": 4,
+   "parent": "663"
+  },
+  {
+   "code": "6634",
+   "label": "Indemnités de fonction et de direction",
+   "level": 4,
+   "parent": "663"
+  },
+  {
+   "code": "6635",
+   "label": "Indemnités d'heures supplémentaires",
+   "level": 4,
+   "parent": "663"
+  },
+  {
+   "code": "6636",
+   "label": "Indemnités de correction des examens, concours et tests",
+   "level": 4,
+   "parent": "663"
+  },
+  {
+   "code": "6637",
+   "label": "Primes et indemnités d'activités pédagogiques",
+   "level": 4,
+   "parent": "663"
+  },
+  {
+   "code": "6639",
+   "label": "Autres primes et indemnités",
+   "level": 4,
+   "parent": "663"
+  },
+  {
+   "code": "664",
+   "label": "Cotisations sociales",
+   "level": 3,
+   "parent": "66"
+  },
+  {
+   "code": "6641",
+   "label": "Cotisations sociales des personnels sous statut (FNRB)",
+   "level": 4,
+   "parent": "664"
+  },
+  {
+   "code": "6642",
+   "label": "Cotisations sociales des personnels militaires (FNRB)",
+   "level": 4,
+   "parent": "664"
+  },
+  {
+   "code": "6643",
+   "label": "Cotisations sociales des personnels contractuels et occasionnels (CNSS)",
+   "level": 4,
+   "parent": "664"
+  },
+  {
+   "code": "6649",
+   "label": "Cotisations sociales non ventilées",
+   "level": 4,
+   "parent": "664"
+  },
+  {
+   "code": "665",
+   "label": "Traitements et salaires en nature au personnel",
+   "level": 3,
+   "parent": "66"
+  },
+  {
+   "code": "6651",
+   "label": "Frais d'alimentation du personnel",
+   "level": 4,
+   "parent": "665"
+  },
+  {
+   "code": "6652",
+   "label": "Frais d'habillement du personnel",
+   "level": 4,
+   "parent": "665"
+  },
+  {
+   "code": "6653",
+   "label": "Frais de scolarité des enfants du personnel des ambassades",
+   "level": 4,
+   "parent": "665"
+  },
+  {
+   "code": "6654",
+   "label": "Baux administratifs des logements de fonction",
+   "level": 4,
+   "parent": "665"
+  },
+  {
+   "code": "6655",
+   "label": "Frais d'hospitalisation d'urgence et d'évacuation sanitaire à l'étranger",
+   "level": 4,
+   "parent": "665"
+  },
+  {
+   "code": "6656",
+   "label": "Frais d'obsèques du personnel",
+   "level": 4,
+   "parent": "665"
+  },
+  {
+   "code": "6659",
+   "label": "Autres avantages en nature",
+   "level": 4,
+   "parent": "665"
+  },
+  {
+   "code": "666",
+   "label": "Prestations sociales",
+   "level": 3,
+   "parent": "66"
+  },
+  {
+   "code": "6661",
+   "label": "Allocations familiales",
+   "level": 4,
+   "parent": "666"
+  },
+  {
+   "code": "6669",
+   "label": "Autres prestations sociales",
+   "level": 4,
+   "parent": "666"
+  },
+  {
+   "code": "669",
+   "label": "Autres dépenses de personnel",
+   "level": 3,
+   "parent": "66"
+  },
+  {
+   "code": "6691",
+   "label": "Récompenses aux agents méritants",
+   "level": 4,
+   "parent": "669"
+  },
+  {
+   "code": "6699",
+   "label": "Autres dépenses de personnel",
+   "level": 4,
+   "parent": "669"
+  },
+  {
+   "code": "67",
+   "label": "INTERETS ET FRAIS FINANCIERS",
+   "level": 2,
+   "parent": null
+  },
+  {
+   "code": "671",
+   "label": "Intérêts et frais financiers sur la dette",
+   "level": 3,
+   "parent": "67"
+  },
+  {
+   "code": "6711",
+   "label": "Intérêts et frais financiers - dette multilatérale",
+   "level": 4,
+   "parent": "671"
+  },
+  {
+   "code": "6712",
+   "label": "Intérêts et frais financiers - dette bilatérale",
+   "level": 4,
+   "parent": "671"
+  },
+  {
+   "code": "6713",
+   "label": "Intérêts et frais financiers - organismes privés extérieurs",
+   "level": 4,
+   "parent": "671"
+  },
+  {
+   "code": "6714",
+   "label": "Intérêts et frais financiers - dette intérieure",
+   "level": 4,
+   "parent": "671"
+  },
+  {
+   "code": "6715",
+   "label": "Intérêts et frais financiers sur conventions à paiement différé à l'extérieur",
+   "level": 4,
+   "parent": "671"
+  },
+  {
+   "code": "6716",
+   "label": "Intérêts et frais financiers sur conventions à paiement différé à l'intérieur",
+   "level": 4,
+   "parent": "671"
+  },
+  {
+   "code": "6717",
+   "label": "Intérêts et frais financiers sur dette extérieure rééchelonnée",
+   "level": 4,
+   "parent": "671"
+  },
+  {
+   "code": "6719",
+   "label": "Autres Intérêts et frais financiers sur la dette",
+   "level": 4,
+   "parent": "671"
+  },
+  {
+   "code": "672",
+   "label": "Pertes sur cessions de titres de placement",
+   "level": 3,
+   "parent": "67"
+  },
+  {
+   "code": "6721",
+   "label": "Pertes sur cessions de titres de placement",
+   "level": 4,
+   "parent": "672"
+  },
+  {
+   "code": "6729",
+   "label": "Autres Pertes sur cessions de titres de placement",
+   "level": 4,
+   "parent": "672"
+  },
+  {
+   "code": "676",
+   "label": "Pertes de changes",
+   "level": 3,
+   "parent": "67"
+  },
+  {
+   "code": "6761",
+   "label": "Pertes de changes",
+   "level": 4,
+   "parent": "676"
+  },
+  {
+   "code": "6769",
+   "label": "Autres pertes de changes",
+   "level": 4,
+   "parent": "676"
+  },
+  {
+   "code": "679",
+   "label": "Autres intérêts et frais financiers",
+   "level": 3,
+   "parent": "67"
+  },
+  {
+   "code": "6799",
+   "label": "Autres intérêts et frais financiers a",
+   "level": 4,
+   "parent": "679"
+  },
+  {
+   "code": "21",
+   "label": "IMMOBILISATIONS INCORPORELLES",
+   "level": 2,
+   "parent": null
+  },
+  {
+   "code": "211",
+   "label": "Frais de recherche et de développement",
+   "level": 3,
+   "parent": "21"
+  },
+  {
+   "code": "2111",
+   "label": "Frais d'étude, de recherche et de développement",
+   "level": 4,
+   "parent": "211"
+  },
+  {
+   "code": "2112",
+   "label": "Frais de recherches en vue de la valorisation des ressources humaines",
+   "level": 4,
+   "parent": "211"
+  },
+  {
+   "code": "2119",
+   "label": "Autres Frais de recherche et de développement",
+   "level": 4,
+   "parent": "211"
+  },
+  {
+   "code": "212",
+   "label": "Brevets, marques de fabrique, droits d’auteur",
+   "level": 3,
+   "parent": "21"
+  },
+  {
+   "code": "2121",
+   "label": "Brevets, marques de fabrique, droits d’auteur",
+   "level": 4,
+   "parent": "212"
+  },
+  {
+   "code": "2128",
+   "label": "Brevets, marques de fabrique, droits d’auteur en cours",
+   "level": 4,
+   "parent": "212"
+  },
+  {
+   "code": "213",
+   "label": "Conceptions de systèmes d’organisation- progiciels",
+   "level": 3,
+   "parent": "21"
+  },
+  {
+   "code": "2131",
+   "label": "Conceptions de systèmes d’organisation- progiciels",
+   "level": 4,
+   "parent": "213"
+  },
+  {
+   "code": "2138",
+   "label": "Conceptions de systèmes d’organisation- progiciels en cours",
+   "level": 4,
+   "parent": "213"
+  },
+  {
+   "code": "214",
+   "label": "Droit d’exploitation fonds de commerce",
+   "level": 3,
+   "parent": "21"
+  },
+  {
+   "code": "2141",
+   "label": "Droit d’exploitation fonds de commerce",
+   "level": 4,
+   "parent": "214"
+  },
+  {
+   "code": "2148",
+   "label": "Droit d’exploitation fonds de commerce en cours",
+   "level": 4,
+   "parent": "214"
+  },
+  {
+   "code": "219",
+   "label": "Autres droits et valeurs incorporels",
+   "level": 3,
+   "parent": "21"
+  },
+  {
+   "code": "2191",
+   "label": "Immobilisations incorporelles pour le compte de tiers",
+   "level": 4,
+   "parent": "219"
+  },
+  {
+   "code": "2198",
+   "label": "Immobilisations incorporelles pour le compte de tiers en cours",
+   "level": 4,
+   "parent": "219"
+  },
+  {
+   "code": "2199",
+   "label": "Autres droits et valeurs incorporelles",
+   "level": 4,
+   "parent": "219"
+  },
+  {
+   "code": "22",
+   "label": "ACQUISITIONS ET AMENAGEMENTS DES SOLS ET SOUS - SOLS",
+   "level": 2,
+   "parent": null
+  },
+  {
+   "code": "221",
+   "label": "Terrains",
+   "level": 3,
+   "parent": "22"
+  },
+  {
+   "code": "2211",
+   "label": "Terrains",
+   "level": 4,
+   "parent": "221"
+  },
+  {
+   "code": "2218",
+   "label": "Terrains en cours",
+   "level": 4,
+   "parent": "221"
+  },
+  {
+   "code": "222",
+   "label": "Sous-sols, gisements et carrière",
+   "level": 3,
+   "parent": "22"
+  },
+  {
+   "code": "2221",
+   "label": "Carrières",
+   "level": 4,
+   "parent": "222"
+  },
+  {
+   "code": "2222",
+   "label": "Gisements miniers",
+   "level": 4,
+   "parent": "222"
+  },
+  {
+   "code": "2223",
+   "label": "Gisements d'hydrocarbures",
+   "level": 4,
+   "parent": "222"
+  },
+  {
+   "code": "2228",
+   "label": "Sous sol, gisements et carrière en cours",
+   "level": 4,
+   "parent": "222"
+  },
+  {
+   "code": "223",
+   "label": "Plantation et forêts",
+   "level": 3,
+   "parent": "22"
+  },
+  {
+   "code": "2231",
+   "label": "Plantation et forêts",
+   "level": 4,
+   "parent": "223"
+  },
+  {
+   "code": "2238",
+   "label": "Plantation et forêts en cours",
+   "level": 4,
+   "parent": "223"
+  },
+  {
+   "code": "224",
+   "label": "Plans d’eau",
+   "level": 3,
+   "parent": "22"
+  },
+  {
+   "code": "2241",
+   "label": "Plans d’eau",
+   "level": 4,
+   "parent": "224"
+  },
+  {
+   "code": "2248",
+   "label": "Plan d’eau en cours",
+   "level": 4,
+   "parent": "224"
+  },
+  {
+   "code": "23",
+   "label": "ACQUISITIONS, CONSTRUCTIONS ET GROSSES REPARATIONS DES IMMEUBLES",
+   "level": 2,
+   "parent": null
+  },
+  {
+   "code": "231",
+   "label": "Bâtiments administratifs à usage de bureau",
+   "level": 3,
+   "parent": "23"
+  },
+  {
+   "code": "2311",
+   "label": "Bâtiments administratifs à usage de bureau",
+   "level": 4,
+   "parent": "231"
+  },
+  {
+   "code": "2318",
+   "label": "Bâtiments administratifs à usage de bureau en cours",
+   "level": 4,
+   "parent": "231"
+  },
+  {
+   "code": "232",
+   "label": "Bâtiments administratifs A usage de logement",
+   "level": 3,
+   "parent": "23"
+  },
+  {
+   "code": "2321",
+   "label": "Bâtiments administratifs A usage de logement (civils)",
+   "level": 4,
+   "parent": "232"
+  },
+  {
+   "code": "2322",
+   "label": "Bâtiments administratifs A usage de logement (militaires)",
+   "level": 4,
+   "parent": "232"
+  },
+  {
+   "code": "2328",
+   "label": "Bâtiments administratifs A usage de logement en cours",
+   "level": 4,
+   "parent": "232"
+  },
+  {
+   "code": "233",
+   "label": "Bâtiments administratifs A usage technique",
+   "level": 3,
+   "parent": "23"
+  },
+  {
+   "code": "2331",
+   "label": "Bâtiments administratifs A usage technique",
+   "level": 4,
+   "parent": "233"
+  },
+  {
+   "code": "2338",
+   "label": "Bâtiments administratifs A usage technique en cours",
+   "level": 4,
+   "parent": "233"
+  },
+  {
+   "code": "234",
+   "label": "Ouvrages",
+   "level": 3,
+   "parent": "23"
+  },
+  {
+   "code": "2341",
+   "label": "Voies de terre",
+   "level": 4,
+   "parent": "234"
+  },
+  {
+   "code": "2342",
+   "label": "Voies de fer",
+   "level": 4,
+   "parent": "234"
+  },
+  {
+   "code": "2343",
+   "label": "Voies d'eau et Ports",
+   "level": 4,
+   "parent": "234"
+  },
+  {
+   "code": "2344",
+   "label": "Aérodromes",
+   "level": 4,
+   "parent": "234"
+  },
+  {
+   "code": "2345",
+   "label": "Ouvrages et équipements hydrauliques - Barrages, digues",
+   "level": 4,
+   "parent": "234"
+  },
+  {
+   "code": "2346",
+   "label": "Réseaux d’eau, d’électricité et d’assainissement",
+   "level": 4,
+   "parent": "234"
+  },
+  {
+   "code": "2347",
+   "label": "Réseaux téléphoniques et medias",
+   "level": 4,
+   "parent": "234"
+  },
+  {
+   "code": "2348",
+   "label": "Ouvrages en cours",
+   "level": 4,
+   "parent": "234"
+  },
+  {
+   "code": "2349",
+   "label": "Autres ouvrages",
+   "level": 4,
+   "parent": "234"
+  },
+  {
+   "code": "235",
+   "label": "Infrastructures",
+   "level": 3,
+   "parent": "23"
+  },
+  {
+   "code": "2351",
+   "label": "Infrastructures",
+   "level": 4,
+   "parent": "235"
+  },
+  {
+   "code": "2358",
+   "label": "Infrastructures en cours",
+   "level": 4,
+   "parent": "235"
+  },
+  {
+   "code": "236",
+   "label": "Réseaux informatiques",
+   "level": 3,
+   "parent": "23"
+  },
+  {
+   "code": "2361",
+   "label": "Réseaux informatiques",
+   "level": 4,
+   "parent": "236"
+  },
+  {
+   "code": "2368",
+   "label": "Réseaux informatiques en cours",
+   "level": 4,
+   "parent": "236"
+  },
+  {
+   "code": "24",
+   "label": "ACQUISITIONS ET GROSSES REPARATIONS DU MATERIEL ET MOBILIER",
+   "level": 2,
+   "parent": null
+  },
+  {
+   "code": "241",
+   "label": "Mobilier et matériel de logement et de bureau",
+   "level": 3,
+   "parent": "24"
+  },
+  {
+   "code": "2411",
+   "label": "Mobilier et matériel de logement",
+   "level": 4,
+   "parent": "241"
+  },
+  {
+   "code": "2412",
+   "label": "Mobilier et matériel de bureau (autre qu’informatique)",
+   "level": 4,
+   "parent": "241"
+  },
+  {
+   "code": "2418",
+   "label": "Mobilier et matériel de logement et de bureau en cours",
+   "level": 4,
+   "parent": "241"
+  },
+  {
+   "code": "242",
+   "label": "Matériel informatique de bureau",
+   "level": 3,
+   "parent": "24"
+  },
+  {
+   "code": "2421",
+   "label": "Matériel informatique de bureau",
+   "level": 4,
+   "parent": "242"
+  },
+  {
+   "code": "2428",
+   "label": "Matériel informatique de bureau en cours",
+   "level": 4,
+   "parent": "242"
+  },
+  {
+   "code": "243",
+   "label": "Matériel de transport de service et de fonction",
+   "level": 3,
+   "parent": "24"
+  },
+  {
+   "code": "2431",
+   "label": "Matériel de transport de service",
+   "level": 4,
+   "parent": "243"
+  },
+  {
+   "code": "2432",
+   "label": "Matériel de transport de fonction",
+   "level": 4,
+   "parent": "243"
+  },
+  {
+   "code": "2438",
+   "label": "Matériel de transport de service et de fonction en cours",
+   "level": 4,
+   "parent": "243"
+  },
+  {
+   "code": "244",
+   "label": "Matériel et outillage techniques",
+   "level": 3,
+   "parent": "24"
+  },
+  {
+   "code": "2441",
+   "label": "Matériel et outillage industriel",
+   "level": 4,
+   "parent": "244"
+  },
+  {
+   "code": "2442",
+   "label": "Matériel et outillage de travaux publics",
+   "level": 4,
+   "parent": "244"
+  },
+  {
+   "code": "2443",
+   "label": "Matériel et outillage agricoles",
+   "level": 4,
+   "parent": "244"
+  },
+  {
+   "code": "2444",
+   "label": "Matériel et outillage biomédicaux",
+   "level": 4,
+   "parent": "244"
+  },
+  {
+   "code": "2448",
+   "label": "Matériel et outillage techniques en cours",
+   "level": 4,
+   "parent": "244"
+  },
+  {
+   "code": "2449",
+   "label": "Autres matériels et outillages techniques",
+   "level": 4,
+   "parent": "244"
+  },
+  {
+   "code": "245",
+   "label": "Matériel de transport en commun et de marchandises",
+   "level": 3,
+   "parent": "24"
+  },
+  {
+   "code": "2451",
+   "label": "Matériel de transport routier",
+   "level": 4,
+   "parent": "245"
+  },
+  {
+   "code": "2452",
+   "label": "Matériel de transport ferroviaire",
+   "level": 4,
+   "parent": "245"
+  },
+  {
+   "code": "2453",
+   "label": "Matériel de transport fluvial",
+   "level": 4,
+   "parent": "245"
+  },
+  {
+   "code": "2454",
+   "label": "Matériel de transport maritime",
+   "level": 4,
+   "parent": "245"
+  },
+  {
+   "code": "2455",
+   "label": "Matériel de transport aérien",
+   "level": 4,
+   "parent": "245"
+  },
+  {
+   "code": "2458",
+   "label": "Matériel de transport en commun et de marchandises en cours",
+   "level": 4,
+   "parent": "245"
+  },
+  {
+   "code": "2459",
+   "label": "Autres matériels de transport en commun et de marchandises",
+   "level": 4,
+   "parent": "245"
+  },
+  {
+   "code": "246",
+   "label": "Collections - œuvres d’art",
+   "level": 3,
+   "parent": "24"
+  },
+  {
+   "code": "2461",
+   "label": "Collections - œuvres d’art",
+   "level": 4,
+   "parent": "246"
+  },
+  {
+   "code": "2468",
+   "label": "Collections - œuvres d’art en cours",
+   "level": 4,
+   "parent": "246"
+  },
+  {
+   "code": "247",
+   "label": "Stocks stratégiques ou d’urgence",
+   "level": 3,
+   "parent": "24"
+  },
+  {
+   "code": "2471",
+   "label": "Stock de carburant",
+   "level": 4,
+   "parent": "247"
+  },
+  {
+   "code": "2472",
+   "label": "Stock de céréales et autres produits alimentaires",
+   "level": 4,
+   "parent": "247"
+  },
+  {
+   "code": "2478",
+   "label": "Stocks stratégiques ou d’urgence en cours",
+   "level": 4,
+   "parent": "247"
+  },
+  {
+   "code": "2479",
+   "label": "Autres stocks",
+   "level": 4,
+   "parent": "247"
+  },
+  {
+   "code": "248",
+   "label": "Cheptel",
+   "level": 3,
+   "parent": "24"
+  },
+  {
+   "code": "2481",
+   "label": "cheptel- bovins",
+   "level": 4,
+   "parent": "248"
+  },
+  {
+   "code": "2482",
+   "label": "Cheptel - chevaux",
+   "level": 4,
+   "parent": "248"
+  },
+  {
+   "code": "2483",
+   "label": "Cheptel - dromadaires",
+   "level": 4,
+   "parent": "248"
+  },
+  {
+   "code": "2484",
+   "label": "Cheptel - ânes",
+   "level": 4,
+   "parent": "248"
+  },
+  {
+   "code": "2485",
+   "label": "Cheptel - petits ruminants",
+   "level": 4,
+   "parent": "248"
+  },
+  {
+   "code": "2486",
+   "label": "Cheptel – porcs",
+   "level": 4,
+   "parent": "248"
+  },
+  {
+   "code": "2488",
+   "label": "Cheptel en cours",
+   "level": 4,
+   "parent": "248"
+  },
+  {
+   "code": "2489",
+   "label": "Autre cheptel",
+   "level": 4,
+   "parent": "248"
+  },
+  {
+   "code": "25",
+   "label": "EQUIPEMENTS MILITAIRES",
+   "level": 2,
+   "parent": null
+  },
+  {
+   "code": "251",
+   "label": "Bâtiments militaires",
+   "level": 3,
+   "parent": "25"
+  },
+  {
+   "code": "2511",
+   "label": "Bâtiments militaires (autre qu’à usage de logement)",
+   "level": 4,
+   "parent": "251"
+  },
+  {
+   "code": "2518",
+   "label": "Bâtiments militaires en cours",
+   "level": 4,
+   "parent": "251"
+  },
+  {
+   "code": "252",
+   "label": "Ouvrages et infrastructures militaires",
+   "level": 3,
+   "parent": "25"
+  },
+  {
+   "code": "2521",
+   "label": "Ouvrages et infrastructures militaires",
+   "level": 4,
+   "parent": "252"
+  },
+  {
+   "code": "2528",
+   "label": "Ouvrages et infrastructures en cours",
+   "level": 4,
+   "parent": "252"
+  },
+  {
+   "code": "253",
+   "label": "Mobiliers, matériels militaires et équipements",
+   "level": 3,
+   "parent": "25"
+  },
+  {
+   "code": "2531",
+   "label": "Mobilier et Matériel de bureau (autres qu’informatiques)",
+   "level": 4,
+   "parent": "253"
+  },
+  {
+   "code": "2532",
+   "label": "Matériel informatique",
+   "level": 4,
+   "parent": "253"
+  },
+  {
+   "code": "2533",
+   "label": "Matériel et outillage",
+   "level": 4,
+   "parent": "253"
+  },
+  {
+   "code": "2534",
+   "label": "Véhicule de fonction ou de service",
+   "level": 4,
+   "parent": "253"
+  },
+  {
+   "code": "2535",
+   "label": "Véhicule de transport en commun militaire",
+   "level": 4,
+   "parent": "253"
+  },
+  {
+   "code": "2536",
+   "label": "Véhicule de transport utilitaire militaire",
+   "level": 4,
+   "parent": "253"
+  },
+  {
+   "code": "2537",
+   "label": "Matériel de transport fluvial, maritime ou aérien militaire",
+   "level": 4,
+   "parent": "253"
+  },
+  {
+   "code": "2538",
+   "label": "Mobiliers, matériels militaires et équipements en cours",
+   "level": 4,
+   "parent": "253"
+  },
+  {
+   "code": "2539",
+   "label": "Autres équipements militaires",
+   "level": 4,
+   "parent": "253"
+  },
+  {
+   "code": "26",
+   "label": "PRISES DE PARTICIPATIONS ET CAUTIONNEMENTS",
+   "level": 2,
+   "parent": null
+  },
+  {
+   "code": "261",
+   "label": "Prises de participation à l’intérieur",
+   "level": 3,
+   "parent": "26"
+  },
+  {
+   "code": "2611",
+   "label": "Prises de participations dans des entreprises publiques nationales",
+   "level": 4,
+   "parent": "261"
+  },
+  {
+   "code": "2612",
+   "label": "Prises de participations dans des entreprises publiques non financières nationales",
+   "level": 4,
+   "parent": "261"
+  },
+  {
+   "code": "2613",
+   "label": "Prises de participations dans des institutions financières nationales",
+   "level": 4,
+   "parent": "261"
+  },
+  {
+   "code": "2614",
+   "label": "Prises de participations dans d’autres secteurs de l’économie",
+   "level": 4,
+   "parent": "261"
+  },
+  {
+   "code": "2618",
+   "label": "Prises de participations dans des entreprises publiques nationales en cours",
+   "level": 4,
+   "parent": "261"
+  },
+  {
+   "code": "2619",
+   "label": "Autres prises de participations à l'intérieur",
+   "level": 4,
+   "parent": "261"
+  },
+  {
+   "code": "262",
+   "label": "Prises de participation à l’extérieur",
+   "level": 3,
+   "parent": "26"
+  },
+  {
+   "code": "2621",
+   "label": "Prises de participations dans les institutions et organismes internationaux",
+   "level": 4,
+   "parent": "262"
+  },
+  {
+   "code": "264",
+   "label": "Cautionnements",
+   "level": 3,
+   "parent": "26"
+  },
+  {
+   "code": "2641",
+   "label": "Cautionnements",
+   "level": 4,
+   "parent": "264"
+  },
+  {
+   "code": "27",
+   "label": "TRANSFERTS EN CAPITAL",
+   "level": 2,
+   "parent": null
+  },
+  {
+   "code": "271",
+   "label": "Transferts en capital à d’autres administrations publiques",
+   "level": 3,
+   "parent": "27"
+  },
+  {
+   "code": "272",
+   "label": "Transferts en capital aux entreprises publiques non financières",
+   "level": 3,
+   "parent": "27"
+  },
+  {
+   "code": "273",
+   "label": "Transferts en capital au secteur productif privé",
+   "level": 3,
+   "parent": "27"
+  },
+  {
+   "code": "274",
+   "label": "Transferts en capital aux institutions financières",
+   "level": 3,
+   "parent": "27"
+  },
+  {
+   "code": "275",
+   "label": "Transferts en capital aux institutions à but non lucratif",
+   "level": 3,
+   "parent": "27"
+  },
+  {
+   "code": "276",
+   "label": "Transferts en capital aux ménages",
+   "level": 3,
+   "parent": "27"
+  },
+  {
+   "code": "277",
+   "label": "Transferts en capital aux organisations internationales",
+   "level": 3,
+   "parent": "27"
+  },
+  {
+   "code": "278",
+   "label": "Autres transferts en capital à l’étranger",
+   "level": 3,
+   "parent": "27"
+  },
+  {
+   "code": "279",
+   "label": "Autres transferts en capital",
+   "level": 3,
+   "parent": "27"
+  }
+ ]
+}

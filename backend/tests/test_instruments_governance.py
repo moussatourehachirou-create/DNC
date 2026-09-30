@@ -26,8 +26,8 @@ def test_pta_and_ppm_derive_from_same_snapshot(mission_snapshot):
 
 def test_consumption_plan(mission_snapshot):
     plan = consumption_plan(mission_snapshot)
-    assert plan["6371"][2] == 950_000
-    assert plan["6053"][5] == 100_000 and plan["6053"][8] == 3_500_000
+    assert plan["6114"][2] == 950_000
+    assert plan["6229"][5] == 100_000 and plan["6229"][8] == 3_500_000
     assert sum(sum(months) for months in plan.values()) == totals(mission_snapshot)["total"]
 
 
@@ -53,7 +53,7 @@ def test_plafond_and_period_directives(mission_snapshot):
         Level.NATIONAL,
         "Plafond impression",
         DirectiveKind.PLAFOND,
-        Selector(budget_line_prefix="605"),
+        Selector(budget_line_prefix="622"),
         amount=3_000_000,
     )
     periode = Directive(
