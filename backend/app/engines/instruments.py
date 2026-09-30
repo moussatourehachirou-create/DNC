@@ -38,7 +38,9 @@ class PpmRow:
     lot_id: str
     structure_id: str
     category: str
+    market_type: str
     amount: int
+    amount_ht: int
     procedure: str
     launch_date: str
     need_date: str
@@ -94,7 +96,9 @@ def ppm_rows(lots: list[ProcurementLot]) -> list[PpmRow]:
             lot_id=lot.id,
             structure_id=lot.structure_id,
             category=lot.category,
+            market_type=lot.market_type.value,
             amount=lot.amount,
+            amount_ht=lot.amount_ht,
             procedure=lot.procedure.label,
             launch_date=lot.launch_date.isoformat(),
             need_date=lot.need_date.isoformat(),

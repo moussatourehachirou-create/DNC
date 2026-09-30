@@ -14,13 +14,25 @@ Seuils et délais sont des référentiels versionnés, jamais codés en dur dans
 from __future__ import annotations
 
 from collections import defaultdict
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date, timedelta
+from decimal import Decimal
+from enum import StrEnum
 
 from app.engines.budget_rules import Severity, Violation
+from app.engines.costing import to_fcfa
 from app.engines.snapshot import PlanningSnapshot, ResourceLine
 
 UNCATEGORIZED = "non_categorise"
+
+
+class MarketType(StrEnum):
+    """Types de marché tels qu'ils figurent dans les PPM (colonne « Type de marché »)."""
+
+    TRAVAUX = "T"
+    FOURNITURES = "F"
+    SERVICES = "S"
+    PRESTATIONS_INTELLECTUELLES = "PI"
 
 
 @dataclass(frozen=True)
@@ -41,56 +53,132 @@ class ProcedureStep:
 
 @dataclass(frozen=True)
 class ProcurementRules:
-    """Référentiel de passation pour un exercice : seuils triés et étapes par procédure."""
+    """Référentiel de passation d'un exercice.
+
+    - `thresholds` : barème croissant de procédures par type de marché ;
+    - `steps` : étapes et délais par code de procédure ;
+    - `category_types` : type de marché de chaque catégorie de besoin ;
+    - les seuils s'appliquent aux montants HT : si les coûts programmés sont TTC,
+      ils sont convertis avec `vat_rate`.
+    """
 
     version: str
-    thresholds: tuple[ProcedureThreshold, ...]
+    thresholds: dict[MarketType, tuple[ProcedureThreshold, ...]]
     steps: dict[str, tuple[ProcedureStep, ...]]
+    category_types: dict[str, MarketType] = field(default_factory=dict)
+    default_type: MarketType = MarketType.FOURNITURES
+    costs_include_vat: bool = True
+    vat_rate: Decimal = Decimal("0.18")
 
-    def procedure_for(self, amount_ht: int) -> ProcedureThreshold:
-        for threshold in self.thresholds:
+    def market_type_of(self, category: str) -> MarketType:
+        return self.category_types.get(category, self.default_type)
+
+    def to_ht(self, amount: int) -> int:
+        if not self.costs_include_vat:
+            return amount
+        return to_fcfa(Decimal(amount) / (1 + self.vat_rate))
+
+    def procedure_for(
+        self, amount_ht: int, market_type: MarketType = MarketType.FOURNITURES
+    ) -> ProcedureThreshold:
+        for threshold in self.thresholds[market_type]:
             if threshold.max_amount_ht is None or amount_ht <= threshold.max_amount_ht:
                 return threshold
         raise ValueError("aucune procédure ne couvre ce montant : référentiel incomplet")
 
-    def lower_threshold_crossed(self, amount_ht: int) -> ProcedureThreshold | None:
-        """Premier seuil franchi par le montant (utile pour détecter un fractionnement)."""
-        for threshold in self.thresholds:
-            if threshold.max_amount_ht is not None and amount_ht > threshold.max_amount_ht:
-                return threshold
-        return None
+
+def _scale(*pairs: tuple[str, str, int | None]) -> tuple[ProcedureThreshold, ...]:
+    return tuple(ProcedureThreshold(code, label, ceiling) for code, label, ceiling in pairs)
 
 
-# Référentiel initial — Décret n° 2020-599 du 23 décembre 2020 (Bénin).
-# Seuls les seuils de dispense (4 000 000 FCFA HT) et de demande de cotation
-# (10 000 000 FCFA HT) ont été vérifiés. Les seuils supérieurs et les délais des étapes
-# sont des valeurs provisoires À VALIDER avec le texte officiel et l'ARMP.
+_DISPENSE = ("dispense", "Dispense de procédure", 4_000_000)
+_DC = ("DC", "Demande de cotation", 10_000_000)
+
+# Étapes calquées sur les colonnes des PPM officiels (MESTFP, MIC 2025) pour que
+# l'export remplisse directement le format attendu. Délais provisoires, À VALIDER.
+_STEPS_DRP_AO = lambda publication: (  # noqa: E731
+    ProcedureStep("reception_dossier", "Réception du dossier par l'organe de contrôle", 5),
+    ProcedureStep("avis_dossier", "Avis de non-objection sur le dossier", 5),
+    ProcedureStep("autorisation_lancement", "Autorisation de lancement", 3),
+    ProcedureStep("publication", "Publication de l'avis", 2),
+    ProcedureStep("ouverture_plis", "Ouverture des plis", publication),
+    ProcedureStep("evaluation", "Évaluation des offres", 10),
+    ProcedureStep("avis_evaluation", "Avis de non-objection sur l'évaluation", 5),
+    ProcedureStep("examen_juridique", "Examen juridique du contrat", 5),
+    ProcedureStep("approbation", "Approbation du contrat", 7),
+    ProcedureStep("notification", "Notification du contrat", 3),
+)
+
+# Référentiel initial — Bénin, loi n° 2020-26 et décret n° 2020-599.
+# Vérifiés dans le décret : dispense ≤ 4 000 000 et demande de cotation ≤ 10 000 000 FCFA HT.
+# Plafonds de la DRP DÉDUITS des PPM 2025 (MESTFP, MIC, MJL) : DRP observée jusqu'à
+# ~70 M pour fournitures et services, ~50 M pour prestations intellectuelles, ~160 M
+# pour travaux ; appels d'offres observés au-delà. Valeurs PROVISOIRES À VALIDER (ARMP).
 BENIN_2020_599_PROVISOIRE = ProcurementRules(
-    version="decret-2020-599-provisoire",
-    thresholds=(
-        ProcedureThreshold("dispense", "Dispense de procédure", 4_000_000),
-        ProcedureThreshold("demande_cotation", "Demande de cotation", 10_000_000),
-        ProcedureThreshold("appel_offres", "Appel d'offres (à préciser)", None),
-    ),
+    version="decret-2020-599-provisoire-2025",
+    thresholds={
+        MarketType.FOURNITURES: _scale(
+            _DISPENSE,
+            _DC,
+            ("DRP", "Demande de renseignements et de prix", 70_000_000),
+            ("AOO", "Appel d'offres ouvert", None),
+        ),
+        MarketType.SERVICES: _scale(
+            _DISPENSE,
+            _DC,
+            ("DRP", "Demande de renseignements et de prix", 70_000_000),
+            ("AOO", "Appel d'offres ouvert", None),
+        ),
+        MarketType.TRAVAUX: _scale(
+            _DISPENSE,
+            _DC,
+            ("DRP", "Demande de renseignements et de prix", 200_000_000),
+            ("AOO", "Appel d'offres ouvert", None),
+        ),
+        MarketType.PRESTATIONS_INTELLECTUELLES: _scale(
+            _DISPENSE,
+            _DC,
+            ("DRP", "Demande de renseignements et de prix", 50_000_000),
+            ("AMI_DP", "Appel à manifestation d'intérêt puis demande de propositions", None),
+        ),
+    },
     steps={
         "dispense": (
             ProcedureStep("expression_besoin", "Expression du besoin", 5),
             ProcedureStep("bon_commande", "Bon de commande", 5),
         ),
-        "demande_cotation": (
-            ProcedureStep("dossier", "Préparation du dossier de cotation", 10),
+        "DC": (
+            ProcedureStep("dossier", "Préparation du dossier de cotation", 7),
             ProcedureStep("consultation", "Consultation des fournisseurs", 10),
             ProcedureStep("evaluation", "Ouverture et évaluation", 7),
-            ProcedureStep("attribution", "Attribution et contrat", 8),
+            ProcedureStep("attribution", "Attribution et notification", 6),
         ),
-        "appel_offres": (
-            ProcedureStep("dao", "Élaboration du DAO", 20),
-            ProcedureStep("avis_dao", "Avis sur le DAO", 10),
-            ProcedureStep("publication", "Publication et remise des offres", 30),
-            ProcedureStep("evaluation", "Ouverture et évaluation des offres", 15),
-            ProcedureStep("attribution", "Attribution, avis, approbation", 20),
-            ProcedureStep("notification", "Signature et notification", 10),
+        "DRP": _STEPS_DRP_AO(10),
+        "AOO": _STEPS_DRP_AO(30),
+        "AMI_DP": (
+            ProcedureStep("ami", "Appel à manifestation d'intérêt", 30),
+            ProcedureStep("evaluation_ami", "Évaluation des manifestations", 15),
+            ProcedureStep("demande_propositions", "Demande de propositions", 30),
+            ProcedureStep("evaluation_technique", "Évaluation technique", 15),
+            ProcedureStep("evaluation_financiere", "Évaluation financière", 10),
+            ProcedureStep("contrat", "Négociation, approbation, notification", 15),
         ),
+    },
+    category_types={
+        "impression": MarketType.SERVICES,
+        "restauration": MarketType.SERVICES,
+        "location_salle": MarketType.SERVICES,
+        "entretien_locaux": MarketType.SERVICES,
+        "maintenance": MarketType.SERVICES,
+        "fournitures_bureau": MarketType.FOURNITURES,
+        "materiel_informatique": MarketType.FOURNITURES,
+        "mobilier": MarketType.FOURNITURES,
+        "vehicules": MarketType.FOURNITURES,
+        "carburant": MarketType.FOURNITURES,
+        "construction": MarketType.TRAVAUX,
+        "rehabilitation": MarketType.TRAVAUX,
+        "etudes": MarketType.PRESTATIONS_INTELLECTUELLES,
+        "consultants": MarketType.PRESTATIONS_INTELLECTUELLES,
     },
 )
 
@@ -101,7 +189,7 @@ class MarketNeed:
     activity_id: str
     structure_id: str
     category: str
-    amount: int
+    amount: int  # montant programmé (TTC si les coûts incluent la TVA)
     need_date: date
 
 
@@ -118,7 +206,9 @@ class ProcurementLot:
     id: str
     structure_id: str
     category: str
+    market_type: MarketType
     amount: int
+    amount_ht: int
     procedure: ProcedureThreshold
     need_date: date
     launch_date: date
@@ -176,7 +266,9 @@ def build_lots(snapshot: PlanningSnapshot, rules: ProcurementRules) -> list[Proc
     lots = []
     for (structure_id, category), needs in sorted(groups.items()):
         amount = sum(n.amount for n in needs)
-        procedure = rules.procedure_for(amount)
+        market_type = rules.market_type_of(category)
+        amount_ht = rules.to_ht(amount)
+        procedure = rules.procedure_for(amount_ht, market_type)
         need_date = min(n.need_date for n in needs)
         launch, steps = schedule_backwards(need_date, rules.steps.get(procedure.code, ()))
         lots.append(
@@ -184,7 +276,9 @@ def build_lots(snapshot: PlanningSnapshot, rules: ProcurementRules) -> list[Proc
                 id=f"{structure_id}:{category}",
                 structure_id=structure_id,
                 category=category,
+                market_type=market_type,
                 amount=amount,
+                amount_ht=amount_ht,
                 procedure=procedure,
                 need_date=need_date,
                 launch_date=launch,
@@ -249,7 +343,8 @@ class ManualLot:
     id: str
     structure_id: str
     category: str
-    amount: int
+    amount_ht: int
+    market_type: MarketType = MarketType.FOURNITURES
 
 
 def detect_fractionnement(lots: list[ManualLot], rules: ProcurementRules) -> list[Violation]:
@@ -262,9 +357,10 @@ def detect_fractionnement(lots: list[ManualLot], rules: ProcurementRules) -> lis
     for (structure_id, category), group in groups.items():
         if len(group) < 2:
             continue
-        total = sum(lot.amount for lot in group)
-        cumulative = rules.procedure_for(total)
-        individual = {rules.procedure_for(lot.amount).code for lot in group}
+        market_type = group[0].market_type
+        total = sum(lot.amount_ht for lot in group)
+        cumulative = rules.procedure_for(total, market_type)
+        individual = {rules.procedure_for(lot.amount_ht, market_type).code for lot in group}
         if individual != {cumulative.code}:
             violations.append(
                 Violation(
@@ -272,7 +368,7 @@ def detect_fractionnement(lots: list[ManualLot], rules: ProcurementRules) -> lis
                     severity=Severity.BLOCKING,
                     message=(
                         f"Catégorie {category} découpée en {len(group)} lots pour "
-                        f"{total:,} FCFA au total : le cumul relève de la procédure "
+                        f"{total:,} FCFA HT au total : le cumul relève de la procédure "
                         f"« {cumulative.label} »."
                     ).replace(",", " "),
                     structure_id=structure_id,

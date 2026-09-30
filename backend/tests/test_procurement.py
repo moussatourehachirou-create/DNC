@@ -6,6 +6,7 @@ from app.engines.procurement import (
 )
 from app.engines.procurement import (
     ManualLot,
+    MarketType,
     build_lots,
     check_lots,
     detect_fractionnement,
@@ -24,8 +25,9 @@ def test_lots_group_across_activities(mission_snapshot):
     impression = lots["impression"]
     assert impression.amount == 3_600_000  # 100 000 + 3 500 000, deux activités
     assert impression.activity_ids == ("a1", "a2")
+    assert impression.amount_ht == 3_050_847  # 3,6 M TTC / 1,18
     assert impression.procedure.code == "dispense"
-    assert lots["restauration"].procedure.code == "demande_cotation"
+    assert lots["restauration"].procedure.code == "DC"
 
 
 def test_backward_schedule_ends_on_need_date(mission_snapshot):
@@ -33,14 +35,24 @@ def test_backward_schedule_ends_on_need_date(mission_snapshot):
     assert lot.need_date == date(2027, 9, 1)
     assert lot.steps[-1].end == lot.need_date
     assert lot.steps[0].start == lot.launch_date
-    assert lot.launch_date == date(2027, 7, 28)  # 35 jours de cotation
+    assert lot.launch_date == date(2027, 8, 2)  # 30 jours de demande de cotation
 
 
 def test_threshold_edges():
     assert RULES.procedure_for(4_000_000).code == "dispense"
-    assert RULES.procedure_for(4_000_001).code == "demande_cotation"
-    assert RULES.procedure_for(10_000_000).code == "demande_cotation"
-    assert RULES.procedure_for(10_000_001).code == "appel_offres"
+    assert RULES.procedure_for(4_000_001).code == "DC"
+    assert RULES.procedure_for(10_000_000).code == "DC"
+    assert RULES.procedure_for(10_000_001).code == "DRP"
+    assert RULES.procedure_for(70_000_001).code == "AOO"
+    assert RULES.procedure_for(150_000_000, MarketType.TRAVAUX).code == "DRP"
+    pi = MarketType.PRESTATIONS_INTELLECTUELLES
+    assert RULES.procedure_for(60_000_000, pi).code == "AMI_DP"
+
+
+def test_vat_conversion():
+    assert RULES.to_ht(11_800_000) == 10_000_000
+    assert RULES.market_type_of("construction") == MarketType.TRAVAUX
+    assert RULES.market_type_of("inconnue") == MarketType.FOURNITURES
 
 
 def test_launch_date_already_passed(mission_snapshot):
